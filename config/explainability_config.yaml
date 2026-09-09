@@ -1,0 +1,33 @@
+grad_cam:
+  target_layer: "backbone.layer4"
+  colormap: "COLORMAP_JET"
+  overlay_alpha: 0.5
+
+shap:
+  num_samples: 100
+  feature_names:
+    - "CA-125 Biomarker"
+    - "CEA Biomarker"
+    - "Patient Age"
+    - "Systolic BP"
+    - "Diastolic BP"
+    - "Heart Rate"
+    - "Tumor Size (cm)"
+    - "Ki-67 Index (%)"
+    - "Hemoglobin"
+    - "WBC Count"
+    - "Platelets"
+    - "Glucose Level"
+    - "HER2 Status"
+    - "ER Status"
+    - "PR Status"
+    - "ECOG Score"
+
+lime:
+  num_features: 5
+  num_samples: 500
+
+visualization:
+  dpi: 150
+  figure_size: [10, 8]
+  output_dir: "outputs/visualizations"

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explainable Hybrid AI Cancer Diagnosis System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css?v=1.0.2">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            slate: {
+              950: '#090d16',
+              900: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 selection:bg-teal-500 selection:text-white">
+
+  <!-- Header Navbar -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-500 to-cyan-500 flex items-center justify-center font-bold text-slate-950 text-lg shadow-lg shadow-teal-500/20">
+          🔬
+        </div>
+        <div>
+          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+            Explainable Hybrid AI
+          </h1>
+          <p class="text-xs text-slate-400">Multimodal XAI Clinical Suite</p>
+        </div>
+      </div>
+
+      <!-- Navigation Page Tabs -->
+      <nav class="hidden md:flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 shadow-inner">
+        <button id="navInputsTab" type="button" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-teal-500 text-slate-950 shadow-md flex items-center gap-1.5 cursor-pointer">
+          <span>📋</span> Page 1: Case Inputs
+        </button>
+        <button id="navReportTab" type="button" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-1.5 cursor-pointer">
+          <span>🔬</span> Page 2: Diagnostic Report
+        </button>
+      </nav>
+
+      <div class="flex items-center gap-3 text-xs font-medium">
+        <!-- Light / Dark Mode Toggle Button -->
+        <button id="themeToggleBtn" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer text-xs font-semibold shadow-sm">
+          <span id="themeIcon">☀️</span> <span id="themeText">Light Mode</span>
+        </button>
+
+        <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800">
+          <span class="pulse-dot"></span>
+          <span class="text-slate-300">PyTorch & BioBERT Engine Online</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-teal-500/10 text-teal-300 border border-teal-500/30 font-semibold">
+          <span>🎯</span> <span id="modelAccuracyHeader">Model Accuracy 97.2%</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+    <!-- PAGE 1: CLINICAL CASE INPUTS & PARAMETERS -->
+    <div id="inputsPage" class="space-y-8">
+      
+      <!-- Top Hero Banner -->
+      <div class="p-6 rounded-2xl glass-panel relative overflow-hidden border border-slate-800">
+        <div class="absolute -right-16 -top-16 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute right-32 -bottom-16 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="relative z-10 max-w-3xl">
+          <span class="text-xs font-semibold uppercase tracking-wider text-teal-400 mb-2 inline-block">Multimodal Diagnostic Intelligence</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">
+            Histopathology, NLP Reports & Clinical Biomarker Fusion
+          </h2>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Provide slide images, biopsy report text, and vitals below to generate a comprehensive AI diagnosis and explainable clinical report.
+          </p>
+        </div>
+      </div>
+
+      <!-- Centered Input Form Card (Page 1) -->
+      <form id="diagnosisForm" class="max-w-4xl mx-auto glass-panel p-8 space-y-8 border border-slate-800 shadow-2xl rounded-2xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-5 gap-2">
+          <div>
+            <h3 class="text-xl font-extrabold text-white flex items-center gap-2">
+              <span>📋</span> Clinical Case Parameters & Input Data
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">Select a benchmark case preset or upload custom patient parameters to run multimodal AI inference.</p>
+          </div>
+          <span class="text-xs font-mono font-semibold text-teal-400 px-3 py-1 bg-teal-500/10 rounded-full border border-teal-500/20 w-max">
+            Page 1 of 2
+          </span>
+        </div>
+
+        <!-- Section 1: Benchmark Preset Case Selector -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
+            <span>Preset Benchmark Case Selection</span>
+            <span class="text-[10px] text-slate-400 font-normal">Optional 1-Click Load</span>
+          </label>
+          <select id="presetCaseSelect" class="w-full bg-slate-900 border border-slate-700/80 text-slate-200 text-sm rounded-xl p-3.5 focus:outline-none focus:border-teal-500 transition-colors cursor-pointer font-medium">
+            <option value="" selected>-- Select a Preset Benchmark Case --</option>
+            <option value="CASE-01">Case 01: Invasive Ductal Carcinoma (Breast Cancer)</option>
+            <option value="CASE-02">Case 02: Pulmonary Adenocarcinoma (Lung Cancer)</option>
+            <option value="CASE-03">Case 03: Colonic Adenocarcinoma (Colon Cancer)</option>
+            <option value="CASE-04">Case 04: Normal / Healthy Biopsy & Vitals (Non-Malignant)</option>
+          </select>
+        </div>
+
+        <!-- Section 2: Histopathology Slide Image Upload Dropzone -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+            Histopathology WSI Slide Image (Vision Feature Ingestion)
+          </label>
+          <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-teal-500/70 bg-slate-900/50 hover:bg-slate-900 rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 group">
+            <input type="file" id="imageInput" accept="image/*" class="hidden">
+            <div class="flex flex-col items-center gap-3">
+              <span class="text-4xl group-hover:scale-110 transition-transform">📸</span>
+              <div>
+                <p id="dropZoneText" class="text-sm font-medium text-slate-300">
+                  Drop slide image here or <span class="text-teal-400 font-bold underline">browse file</span>
+                </p>
+                <p class="text-xs text-slate-500 mt-1">Supports PNG, JPG, JPEG histopathology slide scans</p>
+              </div>
+              <img id="imagePreview" src="" alt="Preview" class="hidden w-36 h-36 object-cover rounded-xl border-2 border-teal-500/50 shadow-lg mt-2">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: BioBERT Clinical Pathology Report Textarea -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+            BioBERT Clinical Pathology Report (NLP Transformer Input)
+          </label>
+          <textarea id="reportTextInput" rows="4" class="w-full bg-slate-900 border border-slate-700/80 text-slate-200 text-xs rounded-xl p-4 focus:outline-none focus:border-teal-500 font-mono leading-relaxed transition-colors resize-none" placeholder="Select a benchmark case above or paste pathology report text..."></textarea>
+        </div>
+
+        <!-- Section 4: Patient Vitals & Tumor Biomarkers -->
+        <div class="space-y-3">
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+            Patient Vitals & Clinical Biomarkers (Tabular Features)
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+              <label class="text-xs text-slate-400 block mb-1 font-medium">CA-125 Level (U/mL)</label>
+              <input type="number" step="0.1" id="ca125Input" value="" placeholder="e.g. 48.5" class="w-full bg-slate-950 border border-slate-700 text-teal-400 font-mono font-bold text-sm rounded-lg p-2.5 focus:outline-none focus:border-teal-500">
+            </div>
+            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+              <label class="text-xs text-slate-400 block mb-1 font-medium">CEA Level (ng/mL)</label>
+              <input type="number" step="0.1" id="ceaInput" value="" placeholder="e.g. 12.4" class="w-full bg-slate-950 border border-slate-700 text-teal-400 font-mono font-bold text-sm rounded-lg p-2.5 focus:outline-none focus:border-teal-500">
+            </div>
+            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+              <label class="text-xs text-slate-400 block mb-1 font-medium">Patient Age (Years)</label>
+              <input type="number" id="ageInput" value="" placeholder="e.g. 58" class="w-full bg-slate-950 border border-slate-700 text-slate-200 font-mono font-bold text-sm rounded-lg p-2.5 focus:outline-none focus:border-teal-500">
+            </div>
+            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+              <label class="text-xs text-slate-400 block mb-1 font-medium">Systolic BP (mmHg)</label>
+              <input type="number" id="bpInput" value="" placeholder="e.g. 135" class="w-full bg-slate-950 border border-slate-700 text-slate-200 font-mono font-bold text-sm rounded-lg p-2.5 focus:outline-none focus:border-teal-500">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 5: Primary Action Submit Button -->
+        <button type="submit" id="runInferenceBtn" class="w-full py-4 px-6 bg-gradient-to-r from-teal-500 via-cyan-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-extrabold rounded-xl shadow-xl shadow-teal-500/25 flex items-center justify-center gap-3 text-base tracking-wide transition-all transform active:scale-[0.99] cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Analyze Inputs & Generate Diagnostic Report →
+        </button>
+      </form>
+    </div>
+
+    <!-- PAGE 2: MULTIMODAL AI DIAGNOSTIC REPORT & XAI ANALYSIS -->
+    <div id="reportPage" class="hidden space-y-8 max-w-7xl mx-auto">
+
+      <!-- Action Bar (Back to Inputs & Export Buttons) -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 glass-panel p-4 border border-slate-800">
+        <button id="backToInputsBtn" type="button" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-teal-300 font-bold text-xs hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow">
+          <span>←</span> Back to Case Parameters (Page 1)
+        </button>
+        
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+          <span>Report Generated:</span>
+          <span id="reportTimestamp" class="text-teal-300 font-bold">Live PyTorch Session</span>
+        </div>
+
+        <div class="flex items-center gap-2.5 w-full sm:w-auto">
+          <button onclick="downloadDiagnosticReport()" type="button" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/20">
+            <span>⬇️</span> Download Clinical Report (.txt)
+          </button>
+          <button onclick="window.print()" type="button" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 font-bold text-xs hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow">
+            <span>🖨️</span> Print / Export PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Diagnostic Primary Summary Card -->
+      <div class="glass-panel p-6 border-l-4 border-l-teal-500 shadow-2xl space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-teal-400">Predicted Primary Diagnosis</span>
+            <h3 id="resCancerType" class="text-3xl font-extrabold text-white tracking-tight mt-1">
+              Breast Cancer (Invasive Ductal)
+            </h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="resCancerStage" class="px-4 py-1.5 rounded-full text-xs font-extrabold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+              Stage IIA
+            </span>
+            <span id="resConfidence" class="px-4 py-1.5 rounded-full text-xs font-mono font-bold bg-teal-500/20 text-teal-300 border border-teal-500/40">
+              Model Confidence: 94.8%
+            </span>
+          </div>
+        </div>
+
+        <!-- Inputs Summary Banner -->
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800/80">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+            <span>🔍</span> Analyzed Input Data Summary
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div class="space-y-1">
+              <span class="text-slate-500 font-semibold block">Slide Image:</span>
+              <span id="sumImgText" class="text-slate-200 font-mono block truncate">auto_contrast (12).jpg</span>
+            </div>
+            <div class="space-y-1">
+              <span class="text-slate-500 font-semibold block">Biopsy Report Text:</span>
+              <span id="sumReportText" class="text-slate-200 font-mono block truncate">Invasive ductal carcinoma histology confirmed...</span>
+            </div>
+            <div class="space-y-1">
+              <span class="text-slate-500 font-semibold block">Biomarkers & Vitals:</span>
+              <span id="sumVitalsText" class="text-slate-200 font-mono block">CA-125: 48.5 U/mL | CEA: 12.4 ng/mL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modality Weight Distribution -->
+        <div>
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span class="font-semibold uppercase tracking-wider">Gated Cross-Attention Modality Weights</span>
+            <span class="font-mono text-[11px]">Dynamic Fusion Layer</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+              <div class="text-[10px] text-slate-400 mb-1">Imaging (ResNet50)</div>
+              <div id="imgWeightText" class="font-mono font-bold text-teal-400 text-sm">45%</div>
+              <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-1.5">
+                <div id="imgWeightBar" class="bg-teal-400 h-full rounded-full transition-all duration-500" style="width: 45%;"></div>
+              </div>
+            </div>
+            <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+              <div class="text-[10px] text-slate-400 mb-1">Text (BioBERT)</div>
+              <div id="txtWeightText" class="font-mono font-bold text-cyan-400 text-sm">35%</div>
+              <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-1.5">
+                <div id="txtWeightBar" class="bg-cyan-400 h-full rounded-full transition-all duration-500" style="width: 35%;"></div>
+              </div>
+            </div>
+            <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+              <div class="text-[10px] text-slate-400 mb-1">Tabular Vitals</div>
+              <div id="tabWeightText" class="font-mono font-bold text-purple-400 text-sm">20%</div>
+              <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-1.5">
+                <div id="tabWeightBar" class="bg-purple-400 h-full rounded-full transition-all duration-500" style="width: 20%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Explainability Panels Grid (Grad-CAM & SHAP) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Grad-CAM Visual Heatmap Panel -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h4 class="text-sm font-extrabold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+              <span>🎨</span> Grad-CAM Spatial Heatmap Explanation
+            </h4>
+            <span class="text-xs font-mono text-teal-400">Layer 4.2 Conv</span>
+          </div>
+          <div class="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center">
+            <img id="gradCamImg" src="" alt="Grad-CAM Heatmap" class="w-full h-full object-contain">
+            <div id="gradCamOverlayBadge" class="absolute bottom-3 left-3 right-3 px-3 py-2 rounded-xl bg-slate-950/90 backdrop-blur-md text-xs font-mono flex items-center justify-between border border-slate-800 shadow-lg text-slate-100">
+              <span id="gradCamOverlayText" class="font-bold flex items-center gap-2"><span id="gradCamDot" class="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse"></span> Tumor Focal Region Overlay</span>
+              <span id="gradCamModelBadge" class="text-teal-300 font-extrabold px-2.5 py-0.5 rounded bg-teal-500/20 border border-teal-500/40">ResNet-50 Layer 4.2</span>
+            </div>
+          </div>
+          <img id="originalSlideImg" src="" alt="Original Slide" class="hidden">
+        </div>
+
+        <!-- SHAP Feature Importance Panel -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h4 class="text-sm font-extrabold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+              <span>📊</span> SHAP Feature Attributions
+            </h4>
+            <span class="text-xs font-mono text-teal-400">Game Theoretic Values</span>
+          </div>
+          <div id="shapContainer" class="space-y-3 min-h-[220px]">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- NLP BioBERT Text Attention Badges -->
+      <div class="glass-panel p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h4 class="text-sm font-extrabold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+            <span>🔤</span> BioBERT NLP Token Attention & LIME Interpretability
+          </h4>
+          <span class="text-xs font-mono text-cyan-400">Clinical Key Terms</span>
+        </div>
+        <div id="tokenContainer" class="flex flex-wrap gap-2.5 p-4 rounded-xl bg-slate-950/80 border border-slate-800 min-h-[70px] items-center">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- NCCN Guidelines Treatment Recommendations -->
+      <div class="glass-panel p-6 space-y-4 border-l-4 border-l-emerald-500">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h4 class="text-sm font-extrabold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+            <span>🩺</span> NCCN Guideline Treatment Protocol & Clinical Consensus
+          </h4>
+          <span class="text-xs font-mono text-emerald-400">NCCN v2.2026 Guidelines</span>
+        </div>
+        <div id="treatmentContainer" class="flex flex-wrap gap-2.5">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-16 border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+    Explainable Hybrid AI Cancer Diagnosis System &bull; Multimodal XAI Clinical Suite &bull; PyTorch Framework
+  </footer>
+
+  <script src="js/app.js?v=1.0.2"></script>
+</body>
+</html>

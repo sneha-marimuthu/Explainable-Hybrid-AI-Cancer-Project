@@ -1,0 +1,26 @@
+training:
+  epochs: 10
+  batch_size: 16
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  optimizer: "AdamW"
+  scheduler: "CosineAnnealingLR"
+  early_stopping_patience: 5
+
+data:
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+  random_seed: 42
+  num_workers: 4
+
+loss_weights:
+  cancer_type_loss: 1.0
+  cancer_stage_loss: 0.8
+  treatment_loss: 0.6
+  survival_loss: 0.5
+
+checkpointing:
+  save_dir: "models/trained"
+  checkpoint_dir: "models/checkpoints"
+  save_best_only: true

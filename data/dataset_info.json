@@ -1,0 +1,34 @@
+{
+  "train_ratio": 0.8,
+  "val_ratio": 0.1,
+  "test_ratio": 0.1,
+  "cancer_types": [
+    "breast_cancer",
+    "lung_cancer",
+    "colon_cancer"
+  ],
+  "summary": {
+    "breast_cancer": {
+      "total_found": 7909,
+      "unique_count": 7784,
+      "train_count": 3500,
+      "val_count": 750,
+      "test_count": 750
+    },
+    "lung_cancer": {
+      "total_found": 3609,
+      "unique_count": 3452,
+      "train_count": 2416,
+      "val_count": 517,
+      "test_count": 519
+    },
+    "colon_cancer": {
+      "total_found": 32199,
+      "unique_count": 32188,
+      "train_count": 3500,
+      "val_count": 750,
+      "test_count": 750
+    }
+  },
+  "total_processed": 13452
+}
