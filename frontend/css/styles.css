@@ -1,15 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg-main: #0b0f17;
-  --bg-card: #111827;
-  --bg-card-subtle: #0f172a;
-  --border-card: #1f2937;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --accent-muted: #38bdf8;
-  --text-main: #f9fafb;
-  --text-muted: #9ca3af;
+  --bg-main: #111315;
+  --bg-card: #181a1d;
+  --bg-card-subtle: #202327;
+  --border-card: #2c3036;
+  --border-hover: #3d434b;
+  --brand-blue: #2563eb;
+  --brand-indigo: #4f46e5;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --input-bg: #111315;
+  --input-border: #2c3036;
+  --tooltip-bg: #1e2227;
+  --tooltip-border: #3d434b;
+  --tooltip-text: #f8fafc;
 }
 
 * {
@@ -19,15 +25,16 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Custom Scrollbar - Sleek Minimalist */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -36,32 +43,258 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #374151;
+  background: var(--border-hover);
   border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
-}
 
-/* Modern Minimalist Card Surface */
+/* Modern Card Surface */
 .glass-panel {
   background-color: var(--bg-card);
   border: 1px solid var(--border-card);
-  border-radius: 0.875rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+  border-radius: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.25s ease;
 }
 
-/* Subtle Scroll Fade-In Animation for Input Fields in diagnosisForm */
-.fade-in-field {
+.glass-panel:hover {
+  border-color: var(--border-hover);
+}
+
+/* Info Icon Button (Problem 5: 'i' icon not 'eye') */
+.info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background-color: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  color: #60a5fa;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  font-style: italic;
+  cursor: help;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.info-btn:hover {
+  background-color: rgba(37, 99, 235, 0.25);
+  border-color: rgba(96, 165, 250, 0.6);
+  color: #93c5fd;
+  transform: scale(1.05);
+}
+
+/* Explanatory Human Tooltip & Tab */
+.human-tooltip {
+  visibility: hidden;
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+  transform: translateY(6px);
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 100;
+  background-color: var(--tooltip-bg);
+  border: 1px solid var(--tooltip-border);
+  color: var(--tooltip-text);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+}
+
+.has-tooltip:hover .human-tooltip,
+.has-tooltip:focus-within .human-tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Metric 'Why is this calculated?' link & popover tab (Problem 6) */
+.why-metric-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6875rem; /* 11px */
+  color: #60a5fa;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.why-metric-trigger:hover {
+  color: #93c5fd;
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+/* Input Fields styling */
+.fade-in-field {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .fade-in-field.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Animated Progress Bar */
+.progress-fill {
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+}
+
+/* Light Mode Overrides (Problem 3: Perfectly Aligned Light Mode) */
+html.light {
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #f1f5f9;
+  --border-card: #e2e8f0;
+  --border-hover: #cbd5e1;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --tooltip-bg: #0f172a;
+  --tooltip-border: #334155;
+  --tooltip-text: #f8fafc;
+}
+
+html.light body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+html.light header {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.light .glass-panel {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+}
+
+html.light .glass-panel:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* Re-map hardcoded dark backgrounds in light mode */
+html.light .bg-\[\#111315\],
+html.light .bg-\[\#131314\],
+html.light [class*="bg-[#111315]"],
+html.light [class*="bg-[#131314]"] {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html.light .bg-\[\#181a1d\],
+html.light .bg-\[\#1e1f20\],
+html.light [class*="bg-[#181a1d]"],
+html.light [class*="bg-[#1e1f20]"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+html.light .bg-\[\#202327\],
+html.light .bg-\[\#282a2c\],
+html.light [class*="bg-[#202327]"],
+html.light [class*="bg-[#282a2c]"] {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html.light .border-\[\#2c3036\],
+html.light .border-\[\#2a2b2d\],
+html.light .border-\[\#3c4043\],
+html.light [class*="border-[#2c3036]"],
+html.light [class*="border-[#2a2b2d]"],
+html.light [class*="border-[#3c4043]"] {
+  border-color: #e2e8f0 !important;
+}
+
+/* Light mode text contrast fixes */
+html.light .text-white,
+html.light .text-slate-100,
+html.light .text-slate-200 {
+  color: #0f172a !important;
+}
+
+html.light .text-slate-300,
+html.light .text-slate-400 {
+  color: #475569 !important;
+}
+
+html.light .text-slate-500 {
+  color: #64748b !important;
+}
+
+html.light input,
+html.light textarea,
+html.light select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html.light .info-btn {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+}
+
+html.light .info-btn:hover {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+html.light .why-metric-trigger {
+  color: #2563eb;
+}
+
+html.light .why-metric-trigger:hover {
+  color: #1d4ed8;
+  background-color: #eff6ff;
+}
+
+html.light .human-tooltip {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3) !important;
+}
+
+html.light .human-tooltip strong {
+  color: #93c5fd !important;
+}
+
+html.light .human-tooltip p,
+html.light .human-tooltip span {
+  color: #e2e8f0 !important;
+}
+
+html.light #slideOmittedPlaceholder {
+  background-color: rgba(248, 250, 252, 0.96) !important;
+}
+
+html.light #slideOmittedPlaceholder h5 {
+  color: #0f172a !important;
+}
+
+html.light #slideOmittedPlaceholder p {
+  color: #475569 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -70,135 +303,4 @@ body {
     transform: none !important;
     transition: none !important;
   }
-  
-  #modalityProgressBar {
-    transition: none !important;
-  }
-}
-
-/* Animated Modality Progress Bar Styling */
-.progress-track {
-  background-color: #1e293b;
-  border-radius: 9999px;
-  overflow: hidden;
-  position: relative;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 9999px;
-  background-color: var(--primary);
-  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
-  position: relative;
-}
-
-.progress-fill::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%);
-  animation: progressShine 2.5s infinite;
-}
-
-@keyframes progressShine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-/* Light Mode Overrides */
-html.light {
-  --bg-main: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-card-subtle: #f1f5f9;
-  --border-card: #e2e8f0;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-}
-
-html.light body {
-  background-color: #f8fafc;
-  color: #0f172a;
-}
-
-html.light header {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  border-color: #e2e8f0 !important;
-}
-
-html.light header h1 {
-  color: #0f172a !important;
-}
-
-html.light header p {
-  color: #64748b !important;
-}
-
-html.light .glass-panel {
-  background-color: #ffffff;
-  border-color: #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-}
-
-html.light h2, html.light h3, html.light h4 {
-  color: #0f172a !important;
-}
-
-html.light label {
-  color: #334155 !important;
-}
-
-html.light input, html.light textarea, html.light select {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  border-color: #cbd5e1 !important;
-}
-
-html.light input:focus, html.light textarea:focus, html.light select:focus {
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
-}
-
-html.light .bg-slate-900, 
-html.light .bg-slate-950, 
-html.light .bg-slate-900\/50, 
-html.light .bg-slate-900\/60,
-html.light .bg-slate-900\/70,
-html.light .bg-slate-900\/80, 
-html.light .bg-slate-900\/90,
-html.light .bg-slate-950\/70,
-html.light .bg-slate-950\/80,
-html.light .bg-slate-950\/90 {
-  background-color: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-}
-
-html.light .text-slate-100,
-html.light .text-slate-200, 
-html.light .text-slate-300 {
-  color: #1e293b !important;
-}
-
-html.light .text-slate-400,
-html.light .text-slate-500 {
-  color: #64748b !important;
-}
-
-html.light #themeToggleBtn {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  color: #334155 !important;
-}
-
-html.light #themeToggleBtn:hover {
-  background-color: #f1f5f9 !important;
-  color: #0f172a !important;
-}
-
-html.light .progress-track {
-  background-color: #e2e8f0;
 }

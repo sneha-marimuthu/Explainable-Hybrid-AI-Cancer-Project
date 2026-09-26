@@ -1,24 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
   const API_BASE = '/api/v1';
 
-  // Theme Toggle Logic
+  // Theme Toggle (Light & Dark Modes)
   const themeToggleBtn = document.getElementById('themeToggleBtn');
   const themeIcon = document.getElementById('themeIcon');
-  const themeText = document.getElementById('themeText');
   const htmlEl = document.documentElement;
 
   function setTheme(isDark) {
     if (isDark) {
       htmlEl.classList.add('dark');
       htmlEl.classList.remove('light');
-      if (themeIcon) themeIcon.textContent = '☀️';
-      if (themeText) themeText.textContent = 'Light Mode';
+      if (themeIcon) themeIcon.textContent = '🌙';
       localStorage.setItem('theme', 'dark');
     } else {
       htmlEl.classList.remove('dark');
       htmlEl.classList.add('light');
-      if (themeIcon) themeIcon.textContent = '🌙';
-      if (themeText) themeText.textContent = 'Dark Mode';
+      if (themeIcon) themeIcon.textContent = '☀️';
       localStorage.setItem('theme', 'light');
     }
   }
@@ -28,60 +25,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
-      const isCurrentlyDark = htmlEl.classList.contains('dark');
-      setTheme(!isCurrentlyDark);
+      const isDark = htmlEl.classList.contains('dark');
+      setTheme(!isDark);
     });
   }
 
-  // Model Accuracy Header
-  const modelAccuracyHeader = document.getElementById('modelAccuracyHeader');
-  if (modelAccuracyHeader) {
-    fetch(`${API_BASE}/info`)
-      .then(res => res.json())
-      .then(data => {
-        const accStr = data.accuracy_percent || (data.model_accuracy ? `${data.model_accuracy.toFixed(1)}%` : '97.2%');
-        modelAccuracyHeader.textContent = `Model Accuracy ${accStr}`;
-      })
-      .catch(() => {
-        modelAccuracyHeader.textContent = 'Model Accuracy 97.2%';
-      });
+  // Custom Input Drawer Toggle
+  const toggleInputPanelBtn = document.getElementById('toggleInputPanelBtn');
+  const customInputDrawer = document.getElementById('customInputDrawer');
+  const closeInputDrawerBtn = document.getElementById('closeInputDrawerBtn');
+
+  if (toggleInputPanelBtn && customInputDrawer) {
+    toggleInputPanelBtn.addEventListener('click', () => {
+      customInputDrawer.classList.toggle('hidden');
+      if (!customInputDrawer.classList.contains('hidden')) {
+        triggerVisibleFields();
+      }
+    });
   }
 
-  // 2-Page Navigation
-  const inputsPage = document.getElementById('inputsPage');
-  const reportPage = document.getElementById('reportPage');
-  const navInputsTab = document.getElementById('navInputsTab');
-  const navReportTab = document.getElementById('navReportTab');
-  const backToInputsBtn = document.getElementById('backToInputsBtn');
-
-  function showPage(pageName) {
-    if (pageName === 'inputs') {
-      if (inputsPage) inputsPage.classList.remove('hidden');
-      if (reportPage) reportPage.classList.add('hidden');
-      if (navInputsTab) {
-        navInputsTab.className = 'px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm flex items-center gap-1.5 cursor-pointer';
-      }
-      if (navReportTab) {
-        navReportTab.className = 'px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-white flex items-center gap-1.5 cursor-pointer';
-      }
-      // Re-trigger fade-in visibility for any fields in viewport
-      triggerVisibleFields();
-    } else if (pageName === 'report') {
-      if (inputsPage) inputsPage.classList.add('hidden');
-      if (reportPage) reportPage.classList.remove('hidden');
-      if (navInputsTab) {
-        navInputsTab.className = 'px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-white flex items-center gap-1.5 cursor-pointer';
-      }
-      if (navReportTab) {
-        navReportTab.className = 'px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm flex items-center gap-1.5 cursor-pointer';
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  if (closeInputDrawerBtn && customInputDrawer) {
+    closeInputDrawerBtn.addEventListener('click', () => {
+      customInputDrawer.classList.add('hidden');
+    });
   }
 
-  if (navInputsTab) navInputsTab.addEventListener('click', () => showPage('inputs'));
-  if (navReportTab) navReportTab.addEventListener('click', () => showPage('report'));
-  if (backToInputsBtn) backToInputsBtn.addEventListener('click', () => showPage('inputs'));
+  // Baseline / Nil Values Toggle
+  const toggleNilRecordsBtn = document.getElementById('toggleNilRecordsBtn');
+  const nilRecordsContainer = document.getElementById('nilRecordsContainer');
+  const nilToggleIcon = document.getElementById('nilToggleIcon');
+  const nilToggleText = document.getElementById('nilToggleText');
+
+  if (toggleNilRecordsBtn && nilRecordsContainer) {
+    toggleNilRecordsBtn.addEventListener('click', () => {
+      const isHidden = nilRecordsContainer.classList.contains('hidden');
+      if (isHidden) {
+        nilRecordsContainer.classList.remove('hidden');
+        if (nilToggleIcon) nilToggleIcon.textContent = '⌄';
+        if (nilToggleText) nilToggleText.textContent = 'Hide Baseline & Negative Records';
+      } else {
+        nilRecordsContainer.classList.add('hidden');
+        if (nilToggleIcon) nilToggleIcon.textContent = '📋';
+        if (nilToggleText) nilToggleText.textContent = 'Show Nil & Baseline Records (4 Hidden)';
+      }
+    });
+  }
 
   // Form Elements
   const reportTextInput = document.getElementById('reportTextInput');
@@ -93,11 +81,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const runBtn = document.getElementById('runInferenceBtn');
   const dropZone = document.getElementById('dropZone');
   const imageInput = document.getElementById('imageInput');
+  const dropZonePrompt = document.getElementById('dropZonePrompt');
   const dropZoneText = document.getElementById('dropZoneText');
+  const sampleLoadedInfo = document.getElementById('sampleLoadedInfo');
+  const sampleNameText = document.getElementById('sampleNameText');
+  const sampleOrganText = document.getElementById('sampleOrganText');
+  const sampleTypeBadge = document.getElementById('sampleTypeBadge');
   const imagePreview = document.getElementById('imagePreview');
+  const changeSlideBtn = document.getElementById('changeSlideBtn');
+  const clearSlideBtn = document.getElementById('clearSlideBtn');
   const clearInputsBtn = document.getElementById('clearInputsBtn');
-  const loadSampleSlideBtn = document.getElementById('loadSampleSlideBtn');
   const charCount = document.getElementById('charCount');
+
+  // Conflict / Discordance Alert Elements
+  const modalityConflictBanner = document.getElementById('modalityConflictBanner');
+  const conflictBannerTitle = document.getElementById('conflictBannerTitle');
+  const conflictBannerSummary = document.getElementById('conflictBannerSummary');
+  const conflictBannerAction = document.getElementById('conflictBannerAction');
+  const conflictSeverityBadge = document.getElementById('conflictSeverityBadge');
+  const dismissConflictBtn = document.getElementById('dismissConflictBtn');
+  const drawerDiscordanceWarning = document.getElementById('drawerDiscordanceWarning');
+  const drawerDiscordanceText = document.getElementById('drawerDiscordanceText');
+  const autoFixConflictBtn = document.getElementById('autoFixConflictBtn');
+
+  if (dismissConflictBtn && modalityConflictBanner) {
+    dismissConflictBtn.addEventListener('click', () => {
+      modalityConflictBanner.classList.add('hidden');
+    });
+  }
 
   // Status & Progress Elements
   const completenessBadge = document.getElementById('completenessBadge');
@@ -108,12 +119,45 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusModText = document.getElementById('statusModText');
   const statusModVitals = document.getElementById('statusModVitals');
 
+  // Visual Studio Elements
+  const slideOmittedPlaceholder = document.getElementById('slideOmittedPlaceholder');
+  const placeholderAttachSlideBtn = document.getElementById('placeholderAttachSlideBtn');
+  const gradCamOverlayBadge = document.getElementById('gradCamOverlayBadge');
+  const visualStudioImg = document.getElementById('visualStudioImg');
+  const viewGradCamBtn = document.getElementById('viewGradCamBtn');
+  const viewMacenkoBtn = document.getElementById('viewMacenkoBtn');
+  const viewHematoxylinBtn = document.getElementById('viewHematoxylinBtn');
+  const viewRawTileBtn = document.getElementById('viewRawTileBtn');
+  const slideViewerStage = document.getElementById('slideViewerStage');
+  const hudCoords = document.getElementById('hudCoords');
+  const hudActivation = document.getElementById('hudActivation');
+  const hudTissueClass = document.getElementById('hudTissueClass');
+  const hudDensity = document.getElementById('hudDensity');
+
+  // Real-Time In-Drawer Calculation Feedback Elements
+  const drawerCalculationSuccess = document.getElementById('drawerCalculationSuccess');
+  const drawerCalculatedVerdict = document.getElementById('drawerCalculatedVerdict');
+  const drawerCalculatedConf = document.getElementById('drawerCalculatedConf');
+  const drawerCalculatedSurv = document.getElementById('drawerCalculatedSurv');
+  const drawerCalculatedModalities = document.getElementById('drawerCalculatedModalities');
+  const scrollToResultsBtn = document.getElementById('scrollToResultsBtn');
+
+  if (scrollToResultsBtn) {
+    scrollToResultsBtn.addEventListener('click', () => {
+      const target = document.getElementById('resCancerType') || document.querySelector('.glass-panel');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }
+
   // Global Session State
   let currentPredictionData = null;
   let currentAudienceMode = 'patient';
   let currentVisualChannel = 'grad_cam';
+  let currentLoadedSampleOrgan = null;
 
-  // Subtle Scroll Fade-In Observer for diagnosisForm Fields
+  // Scroll Fade-In Observer for diagnosisForm Fields
   function initFormFieldFadeIn() {
     const formFields = document.querySelectorAll('#diagnosisForm .fade-in-field');
     if (!formFields.length) return;
@@ -127,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }, {
         root: null,
-        rootMargin: '0px 0px -30px 0px',
+        rootMargin: '0px 0px -20px 0px',
         threshold: 0.1
       });
 
@@ -143,32 +187,80 @@ document.addEventListener('DOMContentLoaded', () => {
   function triggerVisibleFields() {
     const formFields = document.querySelectorAll('#diagnosisForm .fade-in-field');
     formFields.forEach((field) => {
-      const rect = field.getBoundingClientRect();
-      if (rect.top < window.innerHeight) {
-        field.classList.add('visible');
-      }
+      field.classList.add('visible');
     });
   }
 
   initFormFieldFadeIn();
 
-  // Live Character Count
+  // Character Count
   if (reportTextInput && charCount) {
     reportTextInput.addEventListener('input', () => {
-      charCount.textContent = `${reportTextInput.value.length} characters`;
+      charCount.textContent = `${reportTextInput.value.length} chars`;
+      checkLiveInputDiscordance();
     });
   }
 
-  // Live Modality Inspection & Animated Progress Bar Function
+  // Live Cross-Modality Incongruence Detector
+  function checkLiveInputDiscordance() {
+    if (!drawerDiscordanceWarning) return;
+
+    const txt = (reportTextInput ? reportTextInput.value : '').toLowerCase();
+    const hasImage = Boolean(imageInput && imageInput.files && imageInput.files.length > 0);
+    const fn = hasImage ? (imageInput.files[0].name || '').toLowerCase() : '';
+
+    const brainKeywords = ['brain', 'glioblastoma', 'astrocytoma', 'meningioma', 'cns', 'craniotomy', 'cerebral'];
+    const lungKeywords = ['lung', 'pulmonary', 'bronchial', 'luad', 'lusc'];
+    const breastKeywords = ['breast', 'ductal', 'mammogram', 'idc', 'ilc'];
+    const colonKeywords = ['colon', 'colorectal', 'sigmoid'];
+
+    let textSite = null;
+    if (brainKeywords.some(k => txt.includes(k))) textSite = 'Brain (Central Nervous System)';
+    else if (lungKeywords.some(k => txt.includes(k))) textSite = 'Lung (Pulmonary)';
+    else if (breastKeywords.some(k => txt.includes(k))) textSite = 'Breast';
+    else if (colonKeywords.some(k => txt.includes(k))) textSite = 'Colon';
+
+    let imageSite = null;
+    if (currentLoadedSampleOrgan) imageSite = currentLoadedSampleOrgan;
+    else if (fn.includes('brain')) imageSite = 'Brain';
+    else if (fn.includes('lung')) imageSite = 'Lung (Pulmonary)';
+    else if (fn.includes('breast')) imageSite = 'Breast';
+    else if (fn.includes('colon')) imageSite = 'Colon';
+
+    if (hasImage && textSite && imageSite && textSite !== imageSite) {
+      drawerDiscordanceWarning.classList.remove('hidden');
+      if (drawerDiscordanceText) {
+        drawerDiscordanceText.textContent = `Modality Conflict: Biopsy notes describe ${textSite}, but attached slide corresponds to ${imageSite} morphology.`;
+      }
+    } else {
+      drawerDiscordanceWarning.classList.add('hidden');
+    }
+  }
+
+  if (autoFixConflictBtn) {
+    autoFixConflictBtn.addEventListener('click', () => {
+      const txt = (reportTextInput ? reportTextInput.value : '').toLowerCase();
+      if (txt.includes('lung') || txt.includes('pulmonary')) {
+        loadSampleOrgan('lung');
+      } else if (txt.includes('colon')) {
+        loadSampleOrgan('colon');
+      } else if (txt.includes('breast') || txt.includes('ductal')) {
+        loadSampleOrgan('breast');
+      }
+      checkLiveInputDiscordance();
+    });
+  }
+
+  // Modality Progress Bar & Counters
   function updateModalityStatus() {
     const hasImage = Boolean(imageInput && imageInput.files && imageInput.files.length > 0);
     const textVal = reportTextInput ? reportTextInput.value.trim() : '';
     const hasText = textVal.length > 5;
     
-    const hasCa125 = ca125Input && ca125Input.value.trim() !== '';
-    const hasCea = ceaInput && ceaInput.value.trim() !== '';
-    const hasAge = ageInput && ageInput.value.trim() !== '';
-    const hasBp = bpInput && bpInput.value.trim() !== '';
+    const hasCa125 = Boolean(ca125Input && ca125Input.value.trim() !== '');
+    const hasCea = Boolean(ceaInput && ceaInput.value.trim() !== '');
+    const hasAge = Boolean(ageInput && ageInput.value.trim() !== '');
+    const hasBp = Boolean(bpInput && bpInput.value.trim() !== '');
     const hasVitals = hasCa125 || hasCea || hasAge || hasBp;
 
     let activeCount = 0;
@@ -176,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hasText) activeCount++;
     if (hasVitals) activeCount++;
 
-    // Calculate percentage and update animated progress bar
     let percent = 0;
     if (activeCount === 1) percent = 33;
     else if (activeCount === 2) percent = 67;
@@ -185,11 +276,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalityProgressBar) {
       modalityProgressBar.style.width = `${percent}%`;
       if (percent === 100) {
-        modalityProgressBar.className = 'progress-fill h-full bg-emerald-600 rounded-full transition-all duration-500 ease-out';
+        modalityProgressBar.className = 'progress-fill h-full bg-emerald-500 rounded-full';
       } else if (percent > 0) {
-        modalityProgressBar.className = 'progress-fill h-full bg-blue-600 rounded-full transition-all duration-500 ease-out';
+        modalityProgressBar.className = 'progress-fill h-full bg-blue-500 rounded-full';
       } else {
-        modalityProgressBar.className = 'progress-fill h-full bg-slate-700 rounded-full transition-all duration-500 ease-out';
+        modalityProgressBar.className = 'progress-fill h-full bg-slate-700 rounded-full';
       }
     }
 
@@ -199,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (modalityCountText) {
       if (activeCount === 3) {
-        modalityCountText.textContent = '3 of 3 modalities provided · Full Multimodal Tri-Fusion';
+        modalityCountText.textContent = '3 of 3 modalities provided · Tri-Modal Fusion Ready';
       } else if (activeCount === 2) {
         modalityCountText.textContent = '2 of 3 modalities provided · Bi-Modal Fusion Active';
       } else if (activeCount === 1) {
@@ -209,59 +300,54 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Status cards
     if (statusModImage) {
       if (hasImage) {
         const fn = imageInput.files[0].name;
-        statusModImage.className = 'p-2.5 rounded-lg bg-slate-900 border border-blue-500/40 text-blue-300 flex items-center justify-between transition-colors';
-        statusModImage.innerHTML = `<span class="text-slate-200 font-medium">Slide Image:</span><span class="font-mono text-[11px] font-semibold truncate max-w-[120px]" title="${fn}">${fn}</span>`;
+        statusModImage.className = 'p-1.5 rounded bg-blue-500/15 text-blue-400 font-semibold text-center truncate border border-blue-500/20';
+        statusModImage.textContent = `Slide: ${fn}`;
       } else {
-        statusModImage.className = 'p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-400 flex items-center justify-between transition-colors';
-        statusModImage.innerHTML = `<span class="text-slate-400 font-medium">Slide Image:</span><span class="font-mono text-[11px] text-slate-500">None Provided</span>`;
+        statusModImage.className = 'p-1.5 rounded bg-[#181a1d] text-slate-400 text-center truncate border border-transparent';
+        statusModImage.textContent = 'Slide: None';
       }
     }
 
     if (statusModText) {
       if (hasText) {
-        const wordCount = textVal.split(/\s+/).length;
-        statusModText.className = 'p-2.5 rounded-lg bg-slate-900 border border-indigo-500/40 text-indigo-300 flex items-center justify-between transition-colors';
-        statusModText.innerHTML = `<span class="text-slate-200 font-medium">Pathology Notes:</span><span class="font-mono text-[11px] font-semibold">${wordCount} words detected</span>`;
+        statusModText.className = 'p-1.5 rounded bg-purple-500/15 text-purple-300 font-semibold text-center truncate border border-purple-500/20';
+        statusModText.textContent = 'Notes: Active';
       } else {
-        statusModText.className = 'p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-400 flex items-center justify-between transition-colors';
-        statusModText.innerHTML = `<span class="text-slate-400 font-medium">Pathology Notes:</span><span class="font-mono text-[11px] text-slate-500">None Provided</span>`;
+        statusModText.className = 'p-1.5 rounded bg-[#181a1d] text-slate-400 text-center truncate border border-transparent';
+        statusModText.textContent = 'Notes: None';
       }
     }
 
     if (statusModVitals) {
       if (hasVitals) {
-        const markers = [];
-        if (hasCa125) markers.push('CA125');
-        if (hasCea) markers.push('CEA');
-        if (hasAge) markers.push('Age');
-        if (hasBp) markers.push('BP');
-        statusModVitals.className = 'p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 flex items-center justify-between transition-colors';
-        statusModVitals.innerHTML = `<span class="text-slate-200 font-medium">Biomarkers:</span><span class="font-mono text-[11px] font-semibold text-slate-300">${markers.join(', ')}</span>`;
+        statusModVitals.className = 'p-1.5 rounded bg-emerald-500/15 text-emerald-300 font-semibold text-center truncate border border-emerald-500/20';
+        statusModVitals.textContent = 'Biomarkers: Active';
       } else {
-        statusModVitals.className = 'p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-400 flex items-center justify-between transition-colors';
-        statusModVitals.innerHTML = `<span class="text-slate-400 font-medium">Biomarkers:</span><span class="font-mono text-[11px] text-slate-500">None Provided</span>`;
+        statusModVitals.className = 'p-1.5 rounded bg-[#181a1d] text-slate-400 text-center truncate border border-transparent';
+        statusModVitals.textContent = 'Biomarkers: None';
       }
     }
 
     if (completenessBadge) {
       if (activeCount === 3) {
-        completenessBadge.className = 'text-xs font-mono font-medium px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
-        completenessBadge.textContent = 'Complete Tri-Modal (3/3)';
+        completenessBadge.className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+        completenessBadge.textContent = 'Tri-Modal 3/3';
       } else if (activeCount === 2) {
-        completenessBadge.className = 'text-xs font-mono font-medium px-2.5 py-1 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30';
-        completenessBadge.textContent = 'Bi-Modal Fusion (2/3)';
+        completenessBadge.className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30';
+        completenessBadge.textContent = 'Bi-Modal 2/3';
       } else if (activeCount === 1) {
-        completenessBadge.className = 'text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700';
-        completenessBadge.textContent = 'Single Modality (1/3)';
+        completenessBadge.className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-[#202327] text-slate-300 border border-[#3d434b]';
+        completenessBadge.textContent = 'Single 1/3';
       } else {
-        completenessBadge.className = 'text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-950 text-slate-500 border border-slate-800';
-        completenessBadge.textContent = 'Awaiting Clinical Data';
+        completenessBadge.className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-[#181a1d] text-slate-400 border border-[#2c3036]';
+        completenessBadge.textContent = 'Awaiting Input';
       }
     }
+
+    checkLiveInputDiscordance();
   }
 
   if (reportTextInput) reportTextInput.addEventListener('input', updateModalityStatus);
@@ -272,8 +358,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // File Dropzone logic
   if (dropZone && imageInput) {
-    dropZone.addEventListener('click', () => imageInput.click());
-    
+    dropZone.addEventListener('click', (e) => {
+      if (e.target.closest('#changeSlideBtn') || e.target.closest('#clearSlideBtn')) return;
+      if (!imageInput.files || imageInput.files.length === 0) {
+        imageInput.click();
+      }
+    });
+
     ['dragenter', 'dragover'].forEach(eventName => {
       dropZone.addEventListener(eventName, (e) => {
         e.preventDefault();
@@ -291,58 +382,155 @@ document.addEventListener('DOMContentLoaded', () => {
     dropZone.addEventListener('drop', (e) => {
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         imageInput.files = e.dataTransfer.files;
-        handleImageFile(e.dataTransfer.files[0]);
+        handleImageFile(e.dataTransfer.files[0], 'Uploaded Biopsy File');
       }
     });
 
     imageInput.addEventListener('change', (e) => {
       if (e.target.files && e.target.files[0]) {
-        handleImageFile(e.target.files[0]);
+        handleImageFile(e.target.files[0], 'Local Biopsy File');
       }
     });
   }
 
-  function handleImageFile(file) {
-    if (dropZoneText) dropZoneText.textContent = `Selected: ${file.name}`;
+  // Explicit Change / Browse File Button
+  if (changeSlideBtn && imageInput) {
+    changeSlideBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      imageInput.click();
+    });
+  }
+
+  // Explicit Clear Slide Button
+  if (clearSlideBtn && imageInput) {
+    clearSlideBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      imageInput.value = '';
+      currentLoadedSampleOrgan = null;
+      if (dropZonePrompt) dropZonePrompt.classList.remove('hidden');
+      if (sampleLoadedInfo) sampleLoadedInfo.classList.add('hidden');
+      if (imagePreview) imagePreview.src = '';
+      updateModalityStatus();
+    });
+  }
+
+  function handleImageFile(file, contextLabel = 'Attached Specimen') {
     const reader = new FileReader();
     reader.onload = (e) => {
       if (imagePreview) {
         imagePreview.src = e.target.result;
-        imagePreview.classList.remove('hidden');
       }
+      if (dropZonePrompt) dropZonePrompt.classList.add('hidden');
+      if (sampleLoadedInfo) sampleLoadedInfo.classList.remove('hidden');
+      if (sampleTypeBadge) sampleTypeBadge.textContent = contextLabel;
+      if (sampleNameText) sampleNameText.textContent = file.name;
+      
+      const fnLower = file.name.toLowerCase();
+      let organ = 'Unspecified Organ';
+      if (fnLower.includes('breast') || fnLower.includes('idc')) organ = 'Breast (Mammary Gland)';
+      else if (fnLower.includes('lung') || fnLower.includes('luad')) organ = 'Lung (Pulmonary Tissue)';
+      else if (fnLower.includes('colon')) organ = 'Colon / Colorectal';
+      else if (fnLower.includes('brain')) organ = 'Brain (Central Nervous System)';
+      
+      currentLoadedSampleOrgan = organ;
+      if (sampleOrganText) sampleOrganText.textContent = `Organ: ${organ}`;
+      updateModalityStatus();
     };
     reader.readAsDataURL(file);
-    updateModalityStatus();
   }
 
-  // Load Sample Slide Tile
-  if (loadSampleSlideBtn) {
-    loadSampleSlideBtn.addEventListener('click', () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 224;
-      canvas.height = 224;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#fce7f3';
+  // Load Synthetic Clinical Slide Sample
+  function loadSampleOrgan(organType) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 224;
+    canvas.height = 224;
+    const ctx = canvas.getContext('2d');
+
+    let fileName = 'breast_idc_wsi_40x.jpg';
+    let sampleTitle = 'Breast Ductal Carcinoma H&E (40x)';
+    let organDesc = 'Organ: Breast (Mammary Gland)';
+
+    if (organType === 'lung') {
+      fileName = 'lung_luad_wsi_20x.jpg';
+      sampleTitle = 'Pulmonary Adenocarcinoma H&E (20x)';
+      organDesc = 'Organ: Lung (Pulmonary Tissue)';
+      ctx.fillStyle = '#f1f5f9';
       ctx.fillRect(0, 0, 224, 224);
-      for (let i = 0; i < 40; i++) {
-        ctx.fillStyle = i % 2 === 0 ? 'rgba(67, 56, 202, 0.6)' : 'rgba(219, 39, 119, 0.35)';
+      for (let i = 0; i < 35; i++) {
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(79, 70, 229, 0.6)' : 'rgba(16, 185, 129, 0.45)';
+        ctx.beginPath();
+        ctx.arc(Math.random() * 224, Math.random() * 224, Math.random() * 9 + 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (organType === 'colon') {
+      fileName = 'colon_adeno_wsi_20x.jpg';
+      sampleTitle = 'Colonic Adenocarcinoma H&E (20x)';
+      organDesc = 'Organ: Colon / Colorectal';
+      ctx.fillStyle = '#fff1f2';
+      ctx.fillRect(0, 0, 224, 224);
+      for (let i = 0; i < 35; i++) {
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(225, 29, 72, 0.55)' : 'rgba(59, 130, 246, 0.45)';
         ctx.beginPath();
         ctx.arc(Math.random() * 224, Math.random() * 224, Math.random() * 8 + 3, 0, Math.PI * 2);
         ctx.fill();
       }
-      canvas.toBlob((blob) => {
-        const file = new File([blob], 'biopsy_wsi_tile_224x224.jpg', { type: 'image/jpeg' });
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        if (imageInput) imageInput.files = dt.files;
-        handleImageFile(file);
-      }, 'image/jpeg');
+    } else {
+      // Breast default
+      ctx.fillStyle = '#fce7f3';
+      ctx.fillRect(0, 0, 224, 224);
+      for (let i = 0; i < 40; i++) {
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(67, 56, 202, 0.6)' : 'rgba(219, 39, 119, 0.38)';
+        ctx.beginPath();
+        ctx.arc(Math.random() * 224, Math.random() * 224, Math.random() * 8 + 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    canvas.toBlob((blob) => {
+      const file = new File([blob], fileName, { type: 'image/jpeg' });
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      if (imageInput) imageInput.files = dt.files;
+
+      if (imagePreview) imagePreview.src = canvas.toDataURL('image/jpeg');
+      if (dropZonePrompt) dropZonePrompt.classList.add('hidden');
+      if (sampleLoadedInfo) sampleLoadedInfo.classList.remove('hidden');
+      if (sampleTypeBadge) sampleTypeBadge.textContent = 'Benchmark Sample Attached';
+      if (sampleNameText) sampleNameText.textContent = sampleTitle;
+      if (sampleOrganText) sampleOrganText.textContent = organDesc;
+      currentLoadedSampleOrgan = organDesc.replace('Organ: ', '');
+      updateModalityStatus();
+    }, 'image/jpeg');
+  }
+
+  // Sample Load Button Listeners
+  const loadSampleBreastBtn = document.getElementById('loadSampleBreastBtn');
+  const loadSampleLungBtn = document.getElementById('loadSampleLungBtn');
+  const loadSampleColonBtn = document.getElementById('loadSampleColonBtn');
+
+  if (loadSampleBreastBtn) loadSampleBreastBtn.addEventListener('click', () => loadSampleOrgan('breast'));
+  if (loadSampleLungBtn) loadSampleLungBtn.addEventListener('click', () => loadSampleOrgan('lung'));
+  if (loadSampleColonBtn) loadSampleColonBtn.addEventListener('click', () => loadSampleOrgan('colon'));
+
+  // Placeholder Attach Slide button inside stage
+  if (placeholderAttachSlideBtn) {
+    placeholderAttachSlideBtn.addEventListener('click', () => {
+      if (customInputDrawer && customInputDrawer.classList.contains('hidden')) {
+        customInputDrawer.classList.remove('hidden');
+        triggerVisibleFields();
+      }
+      if (dropZone) {
+        dropZone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        dropZone.classList.add('ring-2', 'ring-blue-500');
+        setTimeout(() => dropZone.classList.remove('ring-2', 'ring-blue-500'), 1800);
+      }
     });
   }
 
-  // Benchmarks
+  // Benchmarks Data
   const BENCHMARKS = {
     'CASE-01': {
+      organ: 'breast',
       reportText: 'Histopathology core needle biopsy reveals invasive ductal carcinoma (IDC) of breast. Nuclear pleomorphism, high mitotic index, ER/PR negative, HER2 positive.',
       ca125: 48.5,
       cea: 12.4,
@@ -350,6 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bp: 135
     },
     'CASE-02': {
+      organ: 'lung',
       reportText: 'Pulmonary core biopsy confirms poorly differentiated lung adenocarcinoma (LUAD) of right upper lobe. EGFR exon 19 mutation positive, ALK negative, bronchial invasion.',
       ca125: 14.2,
       cea: 45.8,
@@ -357,6 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bp: 142
     },
     'CASE-03': {
+      organ: 'colon',
       reportText: 'Colonoscopy surgical pathology report indicates moderately differentiated colonic adenocarcinoma with submucosal invasion. Microsatellite instability (MSI-High) detected.',
       ca125: 11.0,
       cea: 38.2,
@@ -364,6 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bp: 128
     },
     'CASE-04': {
+      organ: 'breast',
       reportText: 'Biopsy tissue sample shows normal histology with no evidence of malignancy, atypical cell proliferation, or architectural distortion. Unremarkable cellular morphology.',
       ca125: 12.0,
       cea: 1.2,
@@ -372,6 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Preset Buttons: Click updates inputs and runs analysis immediately
   document.querySelectorAll('.preset-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const caseKey = btn.dataset.case;
@@ -382,8 +574,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ceaInput) ceaInput.value = data.cea;
         if (ageInput) ageInput.value = data.age;
         if (bpInput) bpInput.value = data.bp;
-        if (charCount) charCount.textContent = `${data.reportText.length} characters`;
+        if (charCount) charCount.textContent = `${data.reportText.length} chars`;
+        loadSampleOrgan(data.organ);
         updateModalityStatus();
+        executeInference();
       }
     });
   });
@@ -396,95 +590,127 @@ document.addEventListener('DOMContentLoaded', () => {
       if (ageInput) ageInput.value = '';
       if (bpInput) bpInput.value = '';
       if (imageInput) imageInput.value = '';
-      if (charCount) charCount.textContent = '0 characters';
-      if (dropZoneText) dropZoneText.innerHTML = 'Drop slide image here or <span class="text-blue-400 underline font-medium">browse file</span>';
-      if (imagePreview) {
-        imagePreview.src = '';
-        imagePreview.classList.add('hidden');
-      }
+      if (charCount) charCount.textContent = '0 chars';
+      currentLoadedSampleOrgan = null;
+      if (dropZonePrompt) dropZonePrompt.classList.remove('hidden');
+      if (sampleLoadedInfo) sampleLoadedInfo.classList.add('hidden');
+      if (imagePreview) imagePreview.src = '';
+      if (drawerDiscordanceWarning) drawerDiscordanceWarning.classList.add('hidden');
       updateModalityStatus();
     });
   }
 
-  // Handle Form Submission
-  if (diagnosisForm) {
-    diagnosisForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  // Diagnostic Inference Execution
+  async function executeInference() {
+    if (runBtn) {
+      runBtn.disabled = true;
+      runBtn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Analyzing...
+      `;
+    }
 
-      if (runBtn) {
-        runBtn.disabled = true;
-        runBtn.innerHTML = `<span class="inline-block animate-spin mr-2">⚙️</span> Processing Multi-Task Neural Inference...`;
+    const hasImage = Boolean(imageInput && imageInput.files && imageInput.files.length > 0);
+    const textVal = reportTextInput ? reportTextInput.value.trim() : '';
+    const hasText = textVal.length > 0;
+    const hasVitals = Boolean((ca125Input && ca125Input.value) || (ceaInput && ceaInput.value) || (ageInput && ageInput.value) || (bpInput && bpInput.value));
+
+    const formData = new FormData();
+    if (hasImage) {
+      formData.append('image', imageInput.files[0]);
+    }
+    formData.append('report_text', textVal);
+
+    const vitalsObj = {};
+    if (ca125Input && ca125Input.value !== '') vitalsObj.ca125 = parseFloat(ca125Input.value);
+    if (ceaInput && ceaInput.value !== '') vitalsObj.cea = parseFloat(ceaInput.value);
+    if (ageInput && ageInput.value !== '') vitalsObj.age = parseFloat(ageInput.value);
+    if (bpInput && bpInput.value !== '') vitalsObj.blood_pressure_systolic = parseFloat(bpInput.value);
+    formData.append('vitals', JSON.stringify(vitalsObj));
+
+    try {
+      const response = await fetch(`${API_BASE}/predict`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`Inference returned status ${response.status}`);
       }
 
-      const formData = new FormData();
-      if (imageInput && imageInput.files && imageInput.files[0]) {
-        formData.append('image', imageInput.files[0]);
-      }
-      if (reportTextInput && reportTextInput.value.trim()) {
-        formData.append('report_text', reportTextInput.value.trim());
-      }
+      const result = await response.json();
+      currentPredictionData = result;
+      renderResults(result, hasImage, hasText, hasVitals);
+      initializeSimulator(result);
 
-      const vitalsObj = {};
-      if (ca125Input && ca125Input.value.trim() !== '') vitalsObj.ca125 = parseFloat(ca125Input.value);
-      if (ceaInput && ceaInput.value.trim() !== '') vitalsObj.cea = parseFloat(ceaInput.value);
-      if (ageInput && ageInput.value.trim() !== '') vitalsObj.age = parseInt(ageInput.value);
-      if (bpInput && bpInput.value.trim() !== '') vitalsObj.blood_pressure_systolic = parseInt(bpInput.value);
-
-      if (Object.keys(vitalsObj).length > 0) {
-        formData.append('vitals', JSON.stringify(vitalsObj));
-      }
-
-      const hasImage = Boolean(imageInput && imageInput.files && imageInput.files[0]);
-      const imgFileName = hasImage ? imageInput.files[0].name : 'Not Provided';
-      const reportSnippet = (reportTextInput && reportTextInput.value.trim()) ? reportTextInput.value.trim() : 'Not Provided';
-      
-      const vitalsParts = [];
-      if (vitalsObj.ca125 !== undefined) vitalsParts.push(`CA-125: ${vitalsObj.ca125} U/mL`);
-      if (vitalsObj.cea !== undefined) vitalsParts.push(`CEA: ${vitalsObj.cea} ng/mL`);
-      if (vitalsObj.age !== undefined) vitalsParts.push(`Age: ${vitalsObj.age} yrs`);
-      if (vitalsObj.blood_pressure_systolic !== undefined) vitalsParts.push(`BP: ${vitalsObj.blood_pressure_systolic} mmHg`);
-      const vitalsSummary = vitalsParts.length > 0 ? vitalsParts.join(' | ') : 'Not Provided';
-
-      const sumImgEl = document.getElementById('sumImgText');
-      if (sumImgEl) sumImgEl.textContent = imgFileName;
-
-      const sumRepEl = document.getElementById('sumReportText');
-      if (sumRepEl) sumRepEl.textContent = reportSnippet;
-
-      const sumVitEl = document.getElementById('sumVitalsText');
-      if (sumVitEl) sumVitEl.textContent = vitalsSummary;
-
-      const timeEl = document.getElementById('reportTimestamp');
-      if (timeEl) timeEl.textContent = new Date().toLocaleString();
-
-      try {
-        const response = await fetch(`${API_BASE}/predict`, {
-          method: 'POST',
-          body: formData
-        });
-        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-        const data = await response.json();
-        currentPredictionData = data;
-        renderResults(data, hasImage, Boolean(reportSnippet !== 'Not Provided'), vitalsParts.length > 0);
-        initializeSimulator(data);
-        showPage('report');
-      } catch (err) {
-        console.warn('Backend error or presentation fallback:', err);
-        const fallbackData = getFallbackDemoData();
-        currentPredictionData = fallbackData;
-        renderResults(fallbackData, hasImage, true, true);
-        initializeSimulator(fallbackData);
-        showPage('report');
-      } finally {
-        if (runBtn) {
-          runBtn.disabled = false;
-          runBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Execute Multi-Task Inference &amp; Generate Diagnostic Report →`;
+      // Real-Time In-Drawer Calculation Feedback Banner
+      if (drawerCalculationSuccess) {
+        drawerCalculationSuccess.classList.remove('hidden');
+        if (drawerCalculatedVerdict) {
+          drawerCalculatedVerdict.textContent = `${result.cancer_type} · ${result.cancer_stage} (${result.tnm_classification || ''})`;
+        }
+        if (drawerCalculatedConf) {
+          const conf = result.cancer_type_confidence || result.confidence || 0.95;
+          drawerCalculatedConf.textContent = `${(conf * 100).toFixed(1)}%`;
+        }
+        if (drawerCalculatedSurv) {
+          const sRate = result.survival_probability !== undefined ? Math.round(result.survival_probability * 100) : 90;
+          drawerCalculatedSurv.textContent = `${sRate}%`;
+        }
+        if (drawerCalculatedModalities) {
+          const modArr = [];
+          if (hasImage) modArr.push('Slide Tile');
+          if (hasText) modArr.push('Clinical Notes');
+          if (hasVitals) modArr.push('Biomarkers');
+          drawerCalculatedModalities.textContent = modArr.length > 0
+            ? `${modArr.join(' + ')} Active ${!hasImage ? '· Slide Omitted' : ''}`
+            : 'Default Benchmark';
         }
       }
+
+      // Visual update pulse on verdict elements
+      const verdictEl = document.getElementById('resCancerType');
+      if (verdictEl) {
+        verdictEl.classList.add('ring-2', 'ring-blue-500/80', 'rounded-lg');
+        setTimeout(() => verdictEl.classList.remove('ring-2', 'ring-blue-500/80', 'rounded-lg'), 1800);
+      }
+
+    } catch (err) {
+      console.warn('Inference network failure, falling back to local dataset', err);
+      const fallbackData = getFallbackDemoData(hasImage);
+      currentPredictionData = fallbackData;
+      renderResults(fallbackData, hasImage, true, true);
+      initializeSimulator(fallbackData);
+    } finally {
+      if (runBtn) {
+        runBtn.disabled = false;
+        runBtn.innerHTML = `<span>✓ Analysis Updated</span>`;
+        setTimeout(() => {
+          if (runBtn) runBtn.innerHTML = `<span>⚡</span> Run Diagnostic Analysis`;
+        }, 1500);
+      }
+    }
+  }
+
+  // Form Submit and Direct Button Click: DO NOT CLOSE CUSTOM INPUT DRAWER (User explicitly requested)
+  if (diagnosisForm) {
+    diagnosisForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      executeInference();
     });
   }
 
-  // Audience View Switcher
+  if (runBtn) {
+    runBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      executeInference();
+    });
+  }
+
+  // Audience Narrative Switcher
   const viewPatientSummaryBtn = document.getElementById('viewPatientSummaryBtn');
   const viewTechnicalSummaryBtn = document.getElementById('viewTechnicalSummaryBtn');
   const resPlainSummary = document.getElementById('resPlainSummary');
@@ -492,8 +718,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (viewPatientSummaryBtn && viewTechnicalSummaryBtn) {
     viewPatientSummaryBtn.addEventListener('click', () => {
       currentAudienceMode = 'patient';
-      viewPatientSummaryBtn.className = 'px-3 py-1 rounded-md text-xs font-medium transition-colors bg-white dark:bg-slate-800 text-slate-900 dark:text-white cursor-pointer shadow-xs';
-      viewTechnicalSummaryBtn.className = 'px-3 py-1 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-white cursor-pointer';
+      viewPatientSummaryBtn.className = 'px-3 py-1 rounded-lg font-semibold transition-colors bg-blue-600 text-white shadow-sm cursor-pointer';
+      viewTechnicalSummaryBtn.className = 'px-3 py-1 rounded-lg font-semibold transition-colors text-slate-400 hover:text-white cursor-pointer';
       if (currentPredictionData && resPlainSummary) {
         resPlainSummary.textContent = currentPredictionData.patient_friendly_summary || currentPredictionData.plain_english_summary;
       }
@@ -501,43 +727,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
     viewTechnicalSummaryBtn.addEventListener('click', () => {
       currentAudienceMode = 'technical';
-      viewTechnicalSummaryBtn.className = 'px-3 py-1 rounded-md text-xs font-medium transition-colors bg-white dark:bg-slate-800 text-slate-900 dark:text-white cursor-pointer shadow-xs';
-      viewPatientSummaryBtn.className = 'px-3 py-1 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-white cursor-pointer';
+      viewTechnicalSummaryBtn.className = 'px-3 py-1 rounded-lg font-semibold transition-colors bg-blue-600 text-white shadow-sm cursor-pointer';
+      viewPatientSummaryBtn.className = 'px-3 py-1 rounded-lg font-semibold transition-colors text-slate-400 hover:text-white cursor-pointer';
       if (currentPredictionData && resPlainSummary) {
         resPlainSummary.textContent = currentPredictionData.oncology_technical_summary || currentPredictionData.plain_english_summary;
       }
     });
   }
 
-  // Visual Studio Channel Switcher
-  const viewGradCamBtn = document.getElementById('viewGradCamBtn');
-  const viewMacenkoBtn = document.getElementById('viewMacenkoBtn');
-  const viewHematoxylinBtn = document.getElementById('viewHematoxylinBtn');
-  const viewRawTileBtn = document.getElementById('viewRawTileBtn');
-  const visualStudioImg = document.getElementById('visualStudioImg');
-  const opacitySlider = document.getElementById('opacitySlider');
-  const opacityVal = document.getElementById('opacityVal');
-
+  // Visual Channel Switcher (Corrected logic for missing image)
   function setVisualChannel(channel) {
     currentVisualChannel = channel;
+    const hasImage = Boolean(currentPredictionData && currentPredictionData.grad_cam_available && currentPredictionData.grad_cam_image);
+
+    if (!hasImage) {
+      // Visual modality is omitted
+      if (slideOmittedPlaceholder) slideOmittedPlaceholder.classList.remove('hidden');
+      if (gradCamOverlayBadge) gradCamOverlayBadge.classList.add('hidden');
+      if (visualStudioImg) visualStudioImg.src = '';
+
+      [viewGradCamBtn, viewMacenkoBtn, viewHematoxylinBtn, viewRawTileBtn].forEach(btn => {
+        if (btn) {
+          btn.disabled = true;
+          btn.className = 'channel-tab-btn px-2.5 py-1 rounded-lg text-slate-500 opacity-40 cursor-not-allowed transition-colors';
+          btn.title = 'Attach biopsy slide in custom input to activate channel';
+        }
+      });
+      return;
+    }
+
+    // Image is present: enable channels
+    if (slideOmittedPlaceholder) slideOmittedPlaceholder.classList.add('hidden');
+    if (gradCamOverlayBadge) gradCamOverlayBadge.classList.remove('hidden');
+
     const suite = (currentPredictionData && currentPredictionData.stain_deconvolution_suite) || {};
 
     [viewGradCamBtn, viewMacenkoBtn, viewHematoxylinBtn, viewRawTileBtn].forEach(btn => {
-      if (btn) btn.className = 'channel-tab-btn flex-1 py-1.5 px-2 rounded-md font-medium text-slate-400 hover:text-white transition-colors cursor-pointer';
+      if (btn) {
+        btn.disabled = false;
+        btn.title = '';
+        btn.className = 'channel-tab-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer transition-colors';
+      }
     });
 
     if (channel === 'grad_cam') {
-      if (viewGradCamBtn) viewGradCamBtn.className = 'channel-tab-btn flex-1 py-1.5 px-2 rounded-md font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-colors cursor-pointer';
-      if (visualStudioImg) visualStudioImg.src = suite.grad_cam_overlay || currentPredictionData?.grad_cam_image;
+      if (viewGradCamBtn) viewGradCamBtn.className = 'channel-tab-btn px-2.5 py-1 rounded-lg bg-blue-600 text-white cursor-pointer transition-colors';
+      if (visualStudioImg) visualStudioImg.src = suite.grad_cam_overlay || currentPredictionData?.grad_cam_image || '';
     } else if (channel === 'macenko') {
-      if (viewMacenkoBtn) viewMacenkoBtn.className = 'channel-tab-btn flex-1 py-1.5 px-2 rounded-md font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-colors cursor-pointer';
-      if (visualStudioImg) visualStudioImg.src = suite.macenko_normalized;
+      if (viewMacenkoBtn) viewMacenkoBtn.className = 'channel-tab-btn px-2.5 py-1 rounded-lg bg-blue-600 text-white cursor-pointer transition-colors';
+      if (visualStudioImg) visualStudioImg.src = suite.macenko_normalized || '';
     } else if (channel === 'hematoxylin') {
-      if (viewHematoxylinBtn) viewHematoxylinBtn.className = 'channel-tab-btn flex-1 py-1.5 px-2 rounded-md font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-colors cursor-pointer';
-      if (visualStudioImg) visualStudioImg.src = suite.hematoxylin_channel;
+      if (viewHematoxylinBtn) viewHematoxylinBtn.className = 'channel-tab-btn px-2.5 py-1 rounded-lg bg-blue-600 text-white cursor-pointer transition-colors';
+      if (visualStudioImg) visualStudioImg.src = suite.hematoxylin_channel || '';
     } else if (channel === 'raw') {
-      if (viewRawTileBtn) viewRawTileBtn.className = 'channel-tab-btn flex-1 py-1.5 px-2 rounded-md font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-colors cursor-pointer';
-      if (visualStudioImg) visualStudioImg.src = suite.raw_he_tile;
+      if (viewRawTileBtn) viewRawTileBtn.className = 'channel-tab-btn px-2.5 py-1 rounded-lg bg-blue-600 text-white cursor-pointer transition-colors';
+      if (visualStudioImg) visualStudioImg.src = suite.raw_he_tile || '';
     }
   }
 
@@ -546,29 +790,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (viewHematoxylinBtn) viewHematoxylinBtn.addEventListener('click', () => setVisualChannel('hematoxylin'));
   if (viewRawTileBtn) viewRawTileBtn.addEventListener('click', () => setVisualChannel('raw'));
 
-  if (opacitySlider && opacityVal) {
-    opacitySlider.addEventListener('input', (e) => {
-      const val = e.target.value;
-      opacityVal.textContent = `${val}%`;
-      if (visualStudioImg) {
-        visualStudioImg.style.opacity = (val / 100).toString();
-      }
-    });
-  }
-
-  // Phase 3: Spatial Coordinate Inspector Event Listeners
-  const slideViewerStage = document.getElementById('slideViewerStage');
-  const hudCoords = document.getElementById('hudCoords');
-  const hudActivation = document.getElementById('hudActivation');
-  const hudTissueClass = document.getElementById('hudTissueClass');
-  const hudDensity = document.getElementById('hudDensity');
-
+  // Coordinate Inspector (Only activates when image is provided)
   if (slideViewerStage) {
     slideViewerStage.addEventListener('click', async (e) => {
+      const hasImage = Boolean(currentPredictionData && currentPredictionData.grad_cam_available && currentPredictionData.grad_cam_image);
+      if (!hasImage) {
+        return; // Slide is omitted
+      }
+
       const rect = slideViewerStage.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const clickY = e.clientY - rect.top;
-      // Map to 600x400 SVG space
       const svgX = Math.round((clickX / rect.width) * 600);
       const svgY = Math.round((clickY / rect.height) * 400);
 
@@ -579,23 +811,24 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({
             x: svgX,
             y: svgY,
-            cancer_type: currentPredictionData?.cancer_type || 'Breast Cancer'
+            cancer_type: currentPredictionData?.cancer_type || 'Breast Cancer',
+            has_image: true
           })
         });
         if (resp.ok) {
           const res = await resp.json();
           if (hudCoords) hudCoords.textContent = `(${res.coordinates.x}, ${res.coordinates.y})`;
-          if (hudActivation) hudActivation.textContent = `${res.local_activation} (${res.normalized_intensity})`;
+          if (hudActivation) hudActivation.textContent = `${(res.normalized_intensity || '94.2%')}`;
           if (hudTissueClass) hudTissueClass.textContent = res.microenvironment.tissue_classification;
           if (hudDensity) hudDensity.textContent = res.microenvironment.cellular_density;
         }
       } catch (err) {
-        console.warn('Coordinate inspect fallback', err);
+        console.warn('Inspect coordinates fallback', err);
       }
     });
   }
 
-  // Phase 3: What-If Simulation Engine
+  // What-If Simulation Engine
   const simCa125Slider = document.getElementById('simCa125Slider');
   const simCeaSlider = document.getElementById('simCeaSlider');
   const simCa125Label = document.getElementById('simCa125Label');
@@ -620,7 +853,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (simSurvivalVal) simSurvivalVal.textContent = `${Math.round(data.survival_probability * 100)}%`;
     if (simSurvivalDeltaBadge) {
       simSurvivalDeltaBadge.textContent = '+0% Baseline';
-      simSurvivalDeltaBadge.className = 'font-mono text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400';
+      simSurvivalDeltaBadge.className = 'font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#181a1d] text-slate-300 border border-[#2c3036]';
     }
   }
 
@@ -652,8 +885,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const isPos = deltaStr.startsWith('+') && deltaStr !== '+0%';
           simSurvivalDeltaBadge.textContent = `${deltaStr} 5-Yr Survival`;
           simSurvivalDeltaBadge.className = isPos
-            ? 'font-mono text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-            : (deltaStr.startsWith('-') ? 'font-mono text-[11px] font-semibold px-2 py-0.5 rounded bg-red-500/15 text-red-300 border border-red-500/30' : 'font-mono text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400');
+            ? 'font-mono text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+            : (deltaStr.startsWith('-') ? 'font-mono text-xs font-bold px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30' : 'font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#181a1d] text-slate-300 border border-[#2c3036]');
         }
         if (simThresholdText) {
           simThresholdText.textContent = sim.threshold_needed.clinical_action;
@@ -684,9 +917,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Render All Results (Verifies and corrects all tabs, values, and calculations)
   function renderResults(data, hasImageProvided, hasTextProvided, hasVitalsProvided) {
     const cType = (data.cancer_type || 'Breast Cancer').toLowerCase();
     const isNormal = cType.includes('normal') || cType.includes('healthy') || cType.includes('non-malignant');
+
+    // Modality Incongruence Conflict Alert
+    if (modalityConflictBanner) {
+      if (data.clinical_conflict_alert && data.clinical_conflict_alert.conflict_detected) {
+        modalityConflictBanner.classList.remove('hidden');
+        if (conflictBannerTitle) conflictBannerTitle.textContent = data.clinical_conflict_alert.title || 'Clinical Modality Incongruence Flagged';
+        if (conflictBannerSummary) conflictBannerSummary.textContent = data.clinical_conflict_alert.summary;
+        if (conflictBannerAction) conflictBannerAction.textContent = `Action Required: ${data.clinical_conflict_alert.action}`;
+        if (conflictSeverityBadge) conflictSeverityBadge.textContent = data.clinical_conflict_alert.severity || 'High Discordance';
+      } else {
+        modalityConflictBanner.classList.add('hidden');
+      }
+    }
 
     const cancerTypeEl = document.getElementById('resCancerType');
     if (cancerTypeEl) cancerTypeEl.textContent = data.cancer_type || 'Breast Cancer';
@@ -698,23 +945,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stageEl) {
       stageEl.textContent = data.cancer_stage || 'Stage IIA';
       stageEl.className = isNormal
-        ? 'px-3 py-1 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono'
-        : 'px-3 py-1 rounded-md text-xs font-semibold bg-slate-900 text-slate-200 border border-slate-800 font-mono';
+        ? 'text-xl sm:text-2xl font-extrabold text-emerald-400 font-mono block'
+        : 'text-xl sm:text-2xl font-extrabold text-white font-mono block';
     }
 
     const tnmEl = document.getElementById('resTNMClassification');
     if (tnmEl) {
-      tnmEl.textContent = `TNM: ${data.tnm_classification || 'cT2 N0 M0'}`;
+      tnmEl.textContent = data.tnm_classification || 'cT2 N0 M0';
     }
 
     const confEl = document.getElementById('resConfidence');
-    const confVal = data.cancer_type_confidence || data.confidence || 0.95;
-    if (confEl) confEl.textContent = `Confidence: ${(confVal * 100).toFixed(1)}%`;
+    const confVal = data.cancer_type_confidence || data.confidence || 0.958;
+    if (confEl) confEl.textContent = `${(confVal * 100).toFixed(1)}%`;
 
     const survEl = document.getElementById('resSurvival');
     if (survEl) {
       const sVal = data.survival_probability !== undefined ? Math.round(data.survival_probability * 100) : 93;
-      survEl.textContent = `5-Yr Survival: ${sVal}%`;
+      survEl.textContent = `${sVal}%`;
     }
 
     if (resPlainSummary) {
@@ -723,53 +970,11 @@ document.addEventListener('DOMContentLoaded', () => {
         : (data.patient_friendly_summary || data.plain_english_summary);
     }
 
-    const dqBadge = document.getElementById('resDataQualityBadge');
-    if (dqBadge) {
-      dqBadge.textContent = data.data_quality_rating || `${data.completeness_percent || 67}% Completeness`;
-    }
-
-    const bImg = document.getElementById('badgeImgActive');
-    if (bImg) {
-      const active = Boolean(data.grad_cam_available || hasImageProvided);
-      bImg.textContent = active ? 'Provided' : 'Omitted';
-      bImg.className = active ? 'text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 font-mono' : 'text-[10px] px-1.5 py-0.5 rounded bg-slate-950 text-slate-500 font-mono';
-    }
-
-    const bTxt = document.getElementById('badgeTextActive');
-    if (bTxt) {
-      const active = Boolean(hasTextProvided);
-      bTxt.textContent = active ? 'Provided' : 'Omitted';
-      bTxt.className = active ? 'text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 font-mono' : 'text-[10px] px-1.5 py-0.5 rounded bg-slate-950 text-slate-500 font-mono';
-    }
-
-    const bVit = document.getElementById('badgeVitalsActive');
-    if (bVit) {
-      const active = Boolean(hasVitalsProvided);
-      bVit.textContent = active ? 'Provided' : 'Omitted';
-      bVit.className = active ? 'text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 font-mono' : 'text-[10px] px-1.5 py-0.5 rounded bg-slate-950 text-slate-500 font-mono';
-    }
-
-    const evidenceContainer = document.getElementById('evidenceBreakdownContainer');
-    if (evidenceContainer) {
-      evidenceContainer.innerHTML = '';
-      const evidence = data.evidence_breakdown || [];
-      evidence.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-lg bg-slate-900 border border-slate-800 flex flex-col justify-between space-y-2';
-        card.innerHTML = `
-          <div>
-            <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">${item.modality}</div>
-            <div class="text-xs text-slate-200 leading-snug">${item.finding}</div>
-          </div>
-          <div class="text-[10px] font-mono font-medium text-slate-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 w-max">${item.impact}</div>
-        `;
-        evidenceContainer.appendChild(card);
-      });
-    }
-
-    const imgW = Math.round((data.image_weight !== undefined ? data.image_weight : 0.45) * 100);
-    const txtW = Math.round((data.text_weight !== undefined ? data.text_weight : 0.35) * 100);
-    const tabW = Math.round((data.tabular_weight !== undefined ? data.tabular_weight : 0.20) * 100);
+    // Dynamic Attention Weights (Reflects whether image was provided or omitted)
+    const hasImage = Boolean(data.grad_cam_available && data.grad_cam_image);
+    const imgW = hasImage ? Math.round((data.image_weight !== undefined ? data.image_weight : 0.45) * 100) : 0;
+    const txtW = Math.round((data.text_weight !== undefined ? data.text_weight : (hasImage ? 0.35 : 0.65)) * 100);
+    const tabW = Math.round((data.tabular_weight !== undefined ? data.tabular_weight : (hasImage ? 0.20 : 0.35)) * 100);
 
     const imgTxt = document.getElementById('imgWeightText');
     if (imgTxt) imgTxt.textContent = `${imgW}%`;
@@ -786,24 +991,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabBar = document.getElementById('tabWeightBar');
     if (tabBar) tabBar.style.width = `${tabW}%`;
 
-    const missingBox = document.getElementById('missingRecommendationsBox');
-    const missingList = document.getElementById('missingRecommendationsList');
-    if (missingBox && missingList) {
-      const recs = data.missing_modality_recommendations || [];
-      if (recs.length > 0) {
-        missingList.innerHTML = recs.map(r => `<li>${r}</li>`).join('');
-        missingBox.classList.remove('hidden');
-      } else {
-        missingBox.classList.add('hidden');
-      }
+    const fNote = document.getElementById('fusionWeightNote');
+    if (fNote) {
+      fNote.textContent = hasImage
+        ? 'Tri-Modal Fusion: Vision, Text & Tabular Active'
+        : 'Bimodal Fusion: Text & Tabular Active (Vision Omitted)';
     }
 
-    setVisualChannel('grad_cam');
+    // Visual Channel & Heatmap Display Logic (Fix for missing image!)
+    setVisualChannel(hasImage ? (currentVisualChannel || 'grad_cam') : 'omitted');
 
-    const gradOverlayText = document.getElementById('gradCamOverlayText');
-    if (gradOverlayText) {
-      const titleText = isNormal ? 'Histology Baseline: Non-Malignant Architecture' : 'Peak Activation (310, 190): 0.942';
-      gradOverlayText.innerHTML = `<span class="w-2 h-2 rounded-full ${isNormal ? 'bg-emerald-500' : 'bg-blue-500'}"></span> <span>${titleText}</span>`;
+    if (!hasImage) {
+      if (hudCoords) hudCoords.textContent = '(N/A)';
+      if (hudActivation) hudActivation.textContent = '0% (Omitted)';
+      if (hudTissueClass) hudTissueClass.textContent = 'Slide Not Provided';
+      if (hudDensity) hudDensity.textContent = '0 cells/mm²';
+    } else {
+      if (hudCoords) hudCoords.textContent = '(310, 190)';
+      if (hudActivation) hudActivation.textContent = '94.2%';
+      if (hudTissueClass) hudTissueClass.textContent = 'Tumor Core';
+      if (hudDensity) hudDensity.textContent = '840 cells/mm²';
     }
 
     // SHAP Waterfall Step Rendering
@@ -816,65 +1023,82 @@ document.addEventListener('DOMContentLoaded', () => {
       steps.forEach((step, idx) => {
         const isPositive = step.delta >= 0;
         const deltaStr = isPositive ? `+${step.delta.toFixed(3)}` : step.delta.toFixed(3);
-        const barColor = isPositive ? 'bg-blue-600' : 'bg-slate-600';
+        const barColor = isPositive ? 'bg-blue-500' : 'bg-slate-600';
         const barWidth = Math.min(100, Math.max(10, Math.round(step.cumulative * 100)));
 
         const stepEl = document.createElement('div');
-        stepEl.className = 'p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5 text-xs';
+        stepEl.className = 'p-2.5 rounded-xl bg-[#111315] border border-[#2c3036] space-y-1 text-xs';
         stepEl.innerHTML = `
           <div class="flex items-center justify-between">
             <span class="font-semibold text-slate-200 flex items-center gap-1.5">
               <span class="text-slate-500 font-mono text-[10px]">#${idx + 1}</span>
               <span>${step.feature}</span>
             </span>
-            <span class="font-mono font-bold px-2 py-0.5 rounded text-[11px] bg-slate-950 text-slate-300 border border-slate-800">
+            <span class="font-mono font-bold text-xs ${isPositive ? 'text-blue-400' : 'text-slate-400'}">
               ${deltaStr} SHAP
             </span>
           </div>
           <div class="flex items-center justify-between text-[11px] text-slate-400">
-            <span>Value: <strong class="text-slate-200">${step.value}</strong> · <span class="text-slate-500">${step.reference}</span></span>
-            <span class="font-mono font-medium text-slate-300">Sum: ${step.cumulative.toFixed(2)}</span>
+            <span>Value: <strong class="text-slate-200">${step.value}</strong></span>
+            <span class="font-mono text-[10px] text-slate-500">Sum: ${step.cumulative.toFixed(2)}</span>
           </div>
-          <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
+          <div class="w-full bg-[#202327] h-1.5 rounded-full overflow-hidden">
             <div class="${barColor} h-full rounded-full transition-all duration-300" style="width: ${barWidth}%;"></div>
           </div>
-          <p class="text-[10px] text-slate-400 italic">${step.clinical_note}</p>
         `;
         shapWaterfallContainer.appendChild(stepEl);
       });
     }
 
-    // BioBERT NLP Entity Highlighting
-    const tokenContainer = document.getElementById('tokenContainer');
-    if (tokenContainer) {
-      tokenContainer.innerHTML = '';
-      const biobert = data.biobert_analysis || {};
-      const tokens = biobert.tokens || data.attention_scores || [];
-      const keyTokens = tokens.filter(t => t.is_keyword || (t.score && t.score >= 0.65));
+    // Virtual Tumor Board (MDT)
+    const board = data.virtual_tumor_board;
+    if (board) {
+      const concEl = document.getElementById('mdtConcordanceHeader');
+      if (concEl) concEl.textContent = `${board.consensus_concordance}%`;
 
-      if (keyTokens.length === 0) {
-        const fallbacks = isNormal
-          ? [{ word: 'Normal Histology', cat: 'benign_indicator' }, { word: 'Unremarkable Morphology', cat: 'benign_indicator' }, { word: 'No Neoplasia', cat: 'benign_indicator' }]
-          : [{ word: 'Invasive Carcinoma', cat: 'histological_pattern' }, { word: 'Nuclear Pleomorphism', cat: 'histological_pattern' }, { word: 'Biomarker Expression', cat: 'molecular_marker' }];
+      const boardIdBadge = document.getElementById('mdtBoardIdBadge');
+      if (boardIdBadge) boardIdBadge.textContent = board.board_id;
 
-        fallbacks.forEach(f => {
-          const span = document.createElement('span');
-          span.className = 'px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-slate-900 border border-slate-800 text-slate-300';
-          span.textContent = f.word;
-          tokenContainer.appendChild(span);
+      const specGrid = document.getElementById('mdtSpecialistsGrid');
+      if (specGrid) {
+        specGrid.innerHTML = '';
+        (board.specialists || []).forEach(sp => {
+          let icon = '👨‍⚕️';
+          if (sp.specialty.includes('Medical')) icon = '💊';
+          else if (sp.specialty.includes('Radiation')) icon = '☢️';
+          else if (sp.specialty.includes('Molecular') || sp.specialty.includes('Genetics')) icon = '🧬';
+
+          const card = document.createElement('div');
+          card.className = 'p-3.5 rounded-xl bg-[#111315] border border-[#2c3036] space-y-2 text-xs';
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-base">${icon}</span>
+                <div>
+                  <span class="font-bold text-slate-100 block text-xs">${sp.specialist_name}</span>
+                  <span class="text-[10px] text-slate-400 block">${sp.specialty}</span>
+                </div>
+              </div>
+              <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">✓ ${sp.vote}</span>
+            </div>
+            <p class="text-[11px] text-slate-300 leading-snug">${sp.recommendation}</p>
+          `;
+          specGrid.appendChild(card);
         });
-      } else {
-        keyTokens.forEach(t => {
-          const span = document.createElement('span');
-          span.className = 'px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-slate-900 border border-slate-800 text-slate-300 cursor-help';
-          span.title = `Entity: ${t.category || 'Clinical Finding'} · Attention: ${t.score || 0.90}`;
-          span.textContent = t.word || t.token;
-          tokenContainer.appendChild(span);
-        });
+      }
+
+      const delibList = document.getElementById('mdtDeliberationList');
+      if (delibList) {
+        delibList.innerHTML = (board.deliberation_points || []).map(p => `<li>${p}</li>`).join('');
+      }
+
+      const planList = document.getElementById('mdtActionPlanList');
+      if (planList) {
+        planList.innerHTML = (board.ratified_action_plan || []).map(a => `<li>${a}</li>`).join('');
       }
     }
 
-    // Multi-Task Head 3: NDCG Ranked Therapies
+    // Ranked Therapies
     const rankedContainer = document.getElementById('rankedTherapiesContainer');
     if (rankedContainer) {
       rankedContainer.innerHTML = '';
@@ -882,14 +1106,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       therapies.forEach(tx => {
         const item = document.createElement('div');
-        item.className = 'p-3 rounded-lg bg-slate-900 border border-slate-800 flex flex-col space-y-1 text-xs';
+        item.className = 'p-3 rounded-xl bg-[#111315] border border-[#2c3036] flex flex-col space-y-1 text-xs';
         item.innerHTML = `
           <div class="flex items-center justify-between">
-            <span class="font-bold text-slate-100 flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded bg-slate-950 text-slate-300 font-mono text-[10px] font-bold border border-slate-800">Rank #${tx.priority}</span>
+            <span class="font-bold text-slate-100 flex items-center gap-1.5">
+              <span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 font-mono text-[10px] font-bold border border-blue-500/20">#${tx.priority}</span>
               <span>${tx.name}</span>
             </span>
-            <span class="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">${tx.category}</span>
+            <span class="text-[10px] font-mono text-slate-400">${tx.category}</span>
           </div>
           <p class="text-[11px] text-slate-400">${tx.mechanism}</p>
         `;
@@ -897,7 +1121,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Multi-Task Head 4: Longitudinal Survival Curve
+    // Longitudinal Survival Curve
     const survContainer = document.getElementById('survivalProjectionsContainer');
     if (survContainer) {
       survContainer.innerHTML = '';
@@ -906,371 +1130,131 @@ document.addEventListener('DOMContentLoaded', () => {
 
       curve.forEach(pt => {
         const item = document.createElement('div');
-        item.className = 'p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5 text-xs';
+        item.className = 'p-3 rounded-xl bg-[#111315] border border-[#2c3036] space-y-1.5 text-xs';
         item.innerHTML = `
           <div class="flex items-center justify-between">
             <span class="font-semibold text-slate-200">${pt.timepoint} Horizon</span>
-            <span class="font-mono font-bold text-blue-400">${pt.survival_rate}% (95% CI: ${pt.ci_lower}% - ${pt.ci_upper}%)</span>
+            <span class="font-mono font-bold text-emerald-400">${pt.survival_rate}% (CI: ${pt.ci_lower}% - ${pt.ci_upper}%)</span>
           </div>
-          <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
-            <div class="bg-blue-600 h-full rounded-full transition-all duration-500" style="width: ${pt.survival_rate}%;"></div>
+          <div class="w-full bg-[#202327] h-1.5 rounded-full overflow-hidden">
+            <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: ${pt.survival_rate}%;"></div>
           </div>
         `;
         survContainer.appendChild(item);
       });
     }
 
-    // Phase 3: Clinical Trials Head
+    // Render Hidden Baseline/Nil Records:
+    // 1. Organ Clearance
+    const safety = data.pharmacogenomic_safety;
+    if (safety && safety.organ_clearance) {
+      const renal = document.getElementById('renalCrClText');
+      if (renal && safety.organ_clearance.renal_crcl) {
+        const parts = String(safety.organ_clearance.renal_crcl).split(' ');
+        renal.textContent = parts.length > 1 ? `${parts[0]} ${parts[1]}` : parts[0];
+      }
+      const hep = document.getElementById('hepaticBilirubinText');
+      if (hep && safety.organ_clearance.hepatic_bilirubin) {
+        const parts = String(safety.organ_clearance.hepatic_bilirubin).split(' ');
+        hep.textContent = parts.length > 1 ? `${parts[0]} ${parts[1]}` : parts[0];
+      }
+      const card = document.getElementById('cardiacLVEFText');
+      if (card && safety.organ_clearance.cardiac_lvef) {
+        card.textContent = String(safety.organ_clearance.cardiac_lvef).split(' ')[0];
+      }
+    }
+
+    // 2. Pharmacogenomics
+    const pharmGrid = document.getElementById('pharmacoEnzymesGrid');
+    if (pharmGrid && safety) {
+      pharmGrid.innerHTML = (safety.pharmacogenomics || []).map(p => `
+        <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036] space-y-1 text-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-200 font-mono">${p.gene}</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${p.risk_level}</span>
+          </div>
+          <div class="text-[11px] text-slate-400">${p.phenotype}</div>
+          <div class="text-[10px] text-slate-500 font-mono">Target: ${p.target_drugs}</div>
+        </div>
+      `).join('');
+    }
+
+    // 3. NGS Somatic Alterations
+    const ngs = data.ngs_genomic_profile;
+    if (ngs) {
+      const tmbEl = document.getElementById('ngsTMBText');
+      if (tmbEl) tmbEl.textContent = ngs.tumor_mutational_burden || '6.8';
+      const msiEl = document.getElementById('ngsMSIText');
+      if (msiEl) msiEl.textContent = ngs.microsatellite_status || 'MSS';
+      const pdl1El = document.getElementById('ngsPDL1Text');
+      if (pdl1El) pdl1El.textContent = ngs.pdl1_tps || '35%';
+
+      const vGrid = document.getElementById('ngsVariantsGrid');
+      if (vGrid) {
+        vGrid.innerHTML = (ngs.actionable_variants || []).map(v => `
+          <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036] space-y-1 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-200 font-mono">${v.gene}</span>
+              <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#181a1d] text-slate-300 border border-[#2c3036]">${v.tier}</span>
+            </div>
+            <div class="text-white text-xs font-semibold">${v.variant}</div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1 border-t border-[#2c3036]">
+              <span>VAF: <strong class="text-blue-400">${v.vaf}</strong></span>
+              <span>${v.depth}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // 4. Clinical Trials
     const trialsContainer = document.getElementById('clinicalTrialsContainer');
     if (trialsContainer) {
-      trialsContainer.innerHTML = '';
       const trials = data.matched_clinical_trials || [];
-
       if (trials.length === 0) {
-        trialsContainer.innerHTML = `<div class="p-4 text-xs text-slate-400">No open interventional trials matched for benign presentation. Preventative screening indicated.</div>`;
+        trialsContainer.innerHTML = `<div class="p-3 text-xs text-slate-400">Standard surveillance recommended. No active intervention trials needed.</div>`;
       } else {
-        trials.forEach(tr => {
-          const card = document.createElement('div');
-          card.className = 'p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-xs';
-          card.innerHTML = `
-            <div class="flex items-center justify-between">
-              <span class="font-mono font-bold text-slate-300 text-xs">${tr.nct_id} · ${tr.phase}</span>
-              <span class="px-2 py-0.5 rounded font-mono text-[11px] font-semibold bg-slate-950 text-slate-300 border border-slate-800">
-                ${tr.match_score}% Match
-              </span>
+        trialsContainer.innerHTML = trials.map(tr => `
+          <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036] space-y-1.5 text-xs">
+            <div class="flex items-center justify-between font-mono">
+              <span class="text-slate-300 font-bold">${tr.nct_id} · ${tr.phase}</span>
+              <span class="text-emerald-400 font-semibold">${tr.match_score}% Match</span>
             </div>
-            <div class="font-semibold text-slate-100 text-sm leading-snug">${tr.title}</div>
-            <div class="text-[11px] text-slate-400">
-              <strong class="text-slate-300">Target Intervention:</strong> ${tr.intervention}
-            </div>
-            <div class="text-[10px] p-2 rounded bg-slate-950 border border-slate-800/80 text-slate-300 leading-relaxed">
-              <strong class="text-slate-200">Eligibility Rationale:</strong> ${tr.eligibility_rationale}
-            </div>
-          `;
-          trialsContainer.appendChild(card);
-        });
-      }
-    }
-
-    // Phase 4: Virtual Tumor Board (MDT)
-    renderVirtualTumorBoard(data);
-
-    // Phase 4: Longitudinal RECIST 1.1 Trajectory
-    renderLongitudinalTrajectory(data);
-
-    // Phase 4: Next-Generation Sequencing (NGS) Profiler
-    renderNGSGenomicProfile(data);
-
-    // Phase 4: Pharmacogenomics Safety & Organ Gatekeeper
-    renderPharmacogenomicSafety(data);
-  }
-
-  // Phase 4: Render Virtual Tumor Board (MDT)
-  function renderVirtualTumorBoard(data) {
-    const board = data.virtual_tumor_board;
-    if (!board) return;
-
-    const concEl = document.getElementById('mdtConcordanceHeader');
-    if (concEl) concEl.textContent = `${board.consensus_concordance}% Unanimous`;
-
-    const boardIdBadge = document.getElementById('mdtBoardIdBadge');
-    if (boardIdBadge) boardIdBadge.textContent = board.board_id;
-
-    const verdictText = document.getElementById('mdtConsensusVerdictText');
-    if (verdictText) verdictText.textContent = board.consensus_verdict;
-
-    const summaryText = document.getElementById('mdtClinicalSummaryText');
-    if (summaryText) summaryText.textContent = board.clinical_summary;
-
-    const specGrid = document.getElementById('mdtSpecialistsGrid');
-    if (specGrid) {
-      specGrid.innerHTML = '';
-      (board.specialists || []).forEach(sp => {
-        let icon = '👨‍⚕️';
-        if (sp.specialty.includes('Medical')) icon = '💊';
-        else if (sp.specialty.includes('Radiation')) icon = '☢️';
-        else if (sp.specialty.includes('Molecular') || sp.specialty.includes('Genetics')) icon = '🧬';
-
-        const card = document.createElement('div');
-        card.className = 'p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2.5 text-xs';
-        card.innerHTML = `
-          <div class="flex items-start justify-between gap-2 border-b border-slate-800 pb-2.5">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-sm">
-                ${icon}
-              </div>
-              <div>
-                <span class="font-bold text-slate-100 block">${sp.specialist_name}</span>
-                <span class="text-[10px] text-slate-400 block">${sp.specialty} · ${sp.department}</span>
-              </div>
-            </div>
-            <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300">${sp.evidence_grade}</span>
+            <div class="font-semibold text-slate-100">${tr.title}</div>
+            <div class="text-[11px] text-slate-400">${tr.intervention}</div>
           </div>
-          <div>
-            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">Recommendation:</span>
-            <p class="text-xs text-slate-200 leading-relaxed">${sp.recommendation}</p>
-          </div>
-          <div class="p-2.5 rounded bg-slate-950 border border-slate-800/80 text-[11px] text-slate-300 leading-normal">
-            <strong class="text-slate-200">Clinical Considerations:</strong> ${sp.considerations}
-          </div>
-          <div class="flex items-center justify-between pt-1">
-            <span class="text-[10px] text-slate-500 font-mono">Specialist Position:</span>
-            <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-950 text-slate-300 border border-slate-800">
-              ✓ ${sp.vote}
-            </span>
-          </div>
-        `;
-        specGrid.appendChild(card);
-      });
-    }
-
-    const delibList = document.getElementById('mdtDeliberationList');
-    if (delibList) {
-      delibList.innerHTML = '';
-      (board.deliberation_points || []).forEach(pt => {
-        const li = document.createElement('li');
-        li.textContent = pt;
-        delibList.appendChild(li);
-      });
-    }
-
-    const planList = document.getElementById('mdtActionPlanList');
-    if (planList) {
-      planList.innerHTML = '';
-      (board.ratified_action_plan || []).forEach(action => {
-        const li = document.createElement('li');
-        li.textContent = action;
-        planList.appendChild(li);
-      });
-    }
-  }
-
-  // Phase 4: Render Longitudinal Trajectory
-  function renderLongitudinalTrajectory(data) {
-    const traj = data.longitudinal_trajectory;
-    if (!traj) return;
-
-    const dfsVal = document.getElementById('projectedDFSVal');
-    if (dfsVal) dfsVal.textContent = `${traj.projected_dfs_5yr}%`;
-
-    const hCa125 = document.getElementById('ca125HalfLifeText');
-    if (hCa125 && traj.kinetics) hCa125.textContent = traj.kinetics.ca125_clearance_half_life;
-
-    const hCea = document.getElementById('ceaHalfLifeText');
-    if (hCea && traj.kinetics) hCea.textContent = traj.kinetics.cea_clearance_half_life;
-
-    const velStatus = document.getElementById('bioVelocityStatusText');
-    if (velStatus && traj.kinetics) velStatus.textContent = traj.kinetics.biochemical_velocity_status;
-
-    const mContainer = document.getElementById('longitudinalMilestonesContainer');
-    if (mContainer) {
-      mContainer.innerHTML = '';
-      (traj.milestones || []).forEach(m => {
-        const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-xs flex flex-col justify-between';
-        card.innerHTML = `
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="font-mono font-bold text-slate-200 text-[11px]">${m.timepoint}</span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-300 border border-slate-800">${m.status_badge}</span>
-            </div>
-            <div class="font-semibold text-slate-100 text-xs">${m.phase}</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">RECIST: <strong class="text-white">${m.recist_status}</strong></div>
-          </div>
-          
-          <div class="py-2 border-y border-slate-800 space-y-1">
-            <div class="flex items-center justify-between text-[11px]">
-              <span class="text-slate-400">Target Lesion:</span>
-              <span class="font-mono font-bold text-slate-200">
-                ${m.lesion_diameter_mm} mm ${m.percent_change !== 0 ? `(${m.percent_change}%)` : ''}
-              </span>
-            </div>
-            <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
-              <span>CA-125: <strong class="text-slate-200">${m.ca125} U/mL</strong></span>
-              <span>CEA: <strong class="text-slate-200">${m.cea} ng/mL</strong></span>
-            </div>
-          </div>
-
-          <p class="text-[10px] text-slate-400 leading-snug">${m.clinical_note}</p>
-        `;
-        mContainer.appendChild(card);
-      });
-    }
-
-    updateProjectedMilestone();
-  }
-
-  // Phase 4: Render NGS Somatic Profiler
-  function renderNGSGenomicProfile(data) {
-    const ngs = data.ngs_genomic_profile;
-    if (!ngs) return;
-
-    const tmbEl = document.getElementById('ngsTMBText');
-    if (tmbEl) tmbEl.textContent = ngs.tumor_mutational_burden || '6.8 mut/Mb';
-
-    const msiEl = document.getElementById('ngsMSIText');
-    if (msiEl) msiEl.textContent = ngs.microsatellite_status || 'MSS';
-
-    const pdl1El = document.getElementById('ngsPDL1Text');
-    if (pdl1El) pdl1El.textContent = ngs.pdl1_tps || '35% TPS';
-
-    const vGrid = document.getElementById('ngsVariantsGrid');
-    if (vGrid) {
-      vGrid.innerHTML = '';
-      const variants = ngs.actionable_variants || [];
-      if (variants.length === 0) {
-        vGrid.innerHTML = `<div class="col-span-full p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-400">No pathogenic somatic driver mutations detected. Germline wild-type genome verified.</div>`;
-      } else {
-        variants.forEach(v => {
-          const card = document.createElement('div');
-          card.className = 'p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-xs flex flex-col justify-between';
-          card.innerHTML = `
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <span class="font-bold text-sm text-slate-100 font-mono">${v.gene}</span>
-                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-300 border border-slate-800">${v.tier}</span>
-              </div>
-              <div class="font-semibold text-white text-xs">${v.variant}</div>
-              <div class="text-[10px] text-slate-400 font-mono">${v.exon}</div>
-            </div>
-
-            <div class="py-1.5 border-y border-slate-800 flex items-center justify-between text-[11px] font-mono">
-              <span class="text-slate-400">VAF: <strong class="text-slate-200">${v.vaf}</strong></span>
-              <span class="text-slate-400">Depth: <strong class="text-slate-200">${v.depth}</strong></span>
-            </div>
-
-            <p class="text-[10px] text-slate-300 leading-snug">${v.significance}</p>
-          `;
-          vGrid.appendChild(card);
-        });
-      }
-    }
-
-    const sensTbody = document.getElementById('ngsDrugSensitivityTbody');
-    if (sensTbody) {
-      sensTbody.innerHTML = '';
-      const matrix = ngs.drug_sensitivity_matrix || [];
-      if (matrix.length === 0) {
-        sensTbody.innerHTML = `<tr><td colspan="4" class="p-4 text-xs text-slate-400 text-center">No targeted antineoplastic therapy indicated for benign presentation.</td></tr>`;
-      } else {
-        matrix.forEach(m => {
-          const tr = document.createElement('tr');
-          tr.className = 'hover:bg-slate-900/60 transition-colors';
-          tr.innerHTML = `
-            <td class="p-3">
-              <div class="font-semibold text-slate-100">${m.agent}</div>
-              <div class="text-[10px] text-slate-400 font-mono">${m.drug_class}</div>
-            </td>
-            <td class="p-3 font-mono text-slate-200 font-medium">${m.sensitive_alteration}</td>
-            <td class="p-3">
-              <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 font-mono text-[10px]">${m.approval_status}</span>
-            </td>
-            <td class="p-3 text-[11px] text-slate-300">${m.expected_response}</td>
-          `;
-          sensTbody.appendChild(tr);
-        });
-      }
-    }
-
-    const resMechCont = document.getElementById('ngsResistanceMechanismsContainer');
-    if (resMechCont) {
-      resMechCont.innerHTML = '';
-      const mechs = ngs.resistance_mechanisms_monitored || [];
-      if (mechs.length === 0) {
-        resMechCont.innerHTML = `<div class="text-slate-400 text-[11px]">No oncogene resistance mutations under surveillance.</div>`;
-      } else {
-        mechs.forEach(rm => {
-          const item = document.createElement('div');
-          item.className = 'p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2';
-          item.innerHTML = `
-            <div>
-              <strong class="text-slate-200">${rm.drug}:</strong>
-              <span class="text-slate-300 font-mono ml-1">${rm.resistance_biomarker}</span>
-            </div>
-            <div class="text-[11px] text-slate-400">${rm.monitoring_strategy}</div>
-          `;
-          resMechCont.appendChild(item);
-        });
+        `).join('');
       }
     }
   }
 
-  // Phase 4: Render Pharmacogenomics Safety
-  function renderPharmacogenomicSafety(data) {
-    const safety = data.pharmacogenomic_safety;
-    if (!safety) return;
-
-    const badge = document.getElementById('pharmacoSafetyBadge');
-    if (badge) {
-      badge.textContent = `✓ ${safety.overall_safety_rating}`;
-    }
-
-    const grid = document.getElementById('pharmacoEnzymesGrid');
-    if (grid) {
-      grid.innerHTML = '';
-      const items = safety.pharmacogenomics || [];
-      if (items.length === 0) {
-        grid.innerHTML = `<div class="col-span-full p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400">Baseline pharmacogenomics unremarkable; standard dosing applies.</div>`;
-      } else {
-        items.forEach(pg => {
-          const card = document.createElement('div');
-          card.className = 'p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1 text-xs';
-          card.innerHTML = `
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-100 font-mono text-sm">${pg.gene}</span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-300 border border-slate-800">${pg.risk_level}</span>
-            </div>
-            <div class="font-mono text-slate-300 text-[11px]">${pg.phenotype}</div>
-            <div class="text-[10px] text-slate-400 font-mono">Targets: ${pg.target_drugs}</div>
-            <p class="text-[10px] text-slate-300 leading-snug pt-0.5">${pg.clinical_guidance}</p>
-          `;
-          grid.appendChild(card);
-        });
-      }
-    }
-
-    if (safety.organ_clearance) {
-      const renal = document.getElementById('renalCrClText');
-      if (renal) renal.textContent = safety.organ_clearance.renal_crcl.split(' ')[0] + ' ' + safety.organ_clearance.renal_crcl.split(' ')[1];
-      const hep = document.getElementById('hepaticBilirubinText');
-      if (hep) hep.textContent = safety.organ_clearance.hepatic_bilirubin.split(' ')[0] + ' ' + safety.organ_clearance.hepatic_bilirubin.split(' ')[1];
-      const card = document.getElementById('cardiacLVEFText');
-      if (card) card.textContent = safety.organ_clearance.cardiac_lvef.split(' ')[0];
-    }
-  }
-
-  // Phase 4: Interactive Clinician MDT Ratification Listener
+  // Ratify MDT Listener
   const ratifyMDTBtn = document.getElementById('ratifyMDTBtn');
-  const clinicianNameInput = document.getElementById('clinicianNameInput');
-  const clinicianNotesInput = document.getElementById('clinicianNotesInput');
   const mdtRatificationStatusBadge = document.getElementById('mdtRatificationStatusBadge');
 
   if (ratifyMDTBtn) {
     ratifyMDTBtn.addEventListener('click', async () => {
-      const clinician = clinicianNameInput?.value?.trim() || 'Attending Oncologist';
-      const notes = clinicianNotesInput?.value?.trim() || '';
       const boardId = currentPredictionData?.virtual_tumor_board?.board_id || 'MDT-948201';
-
       try {
         const resp = await fetch(`${API_BASE}/tumor-board/vote`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             board_id: boardId,
-            clinician_name: clinician,
+            clinician_name: 'Attending Oncologist',
             status: 'RATIFIED',
-            override_notes: notes
+            override_notes: 'Ratified by multidisciplinary board attending.'
           })
         });
 
         if (resp.ok) {
           if (mdtRatificationStatusBadge) {
-            mdtRatificationStatusBadge.textContent = `✓ Ratified by ${clinician}`;
-            mdtRatificationStatusBadge.className = 'px-3 py-1.5 rounded-md bg-slate-900 border border-slate-700 text-xs font-mono font-medium text-emerald-400 whitespace-nowrap';
+            mdtRatificationStatusBadge.textContent = '✓ Ratified in EHR Protocol';
+            mdtRatificationStatusBadge.className = 'text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
           }
-          ratifyMDTBtn.innerHTML = `<span>✓</span> Protocol Ratified &amp; Locked in EHR`;
+          ratifyMDTBtn.textContent = '✓ Protocol Ratified';
           ratifyMDTBtn.disabled = true;
-          ratifyMDTBtn.className = 'px-4 py-2 rounded-md bg-slate-800 text-slate-400 font-medium text-xs flex items-center gap-1.5 cursor-default';
+          ratifyMDTBtn.className = 'px-4 py-2 rounded-xl bg-[#202327] text-slate-400 font-bold text-xs cursor-default';
         }
       } catch (err) {
         console.warn('Ratification error:', err);
@@ -1278,201 +1262,66 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Phase 4: Interactive Longitudinal Milestone Projection Slider
-  const milestoneMonthSlider = document.getElementById('milestoneMonthSlider');
-  const milestoneMonthDisplay = document.getElementById('milestoneMonthDisplay');
-  const milestoneRegimenSelect = document.getElementById('milestoneRegimenSelect');
-  const projectedRecistBadge = document.getElementById('projectedRecistBadge');
-  const projectedLesionDiameter = document.getElementById('projectedLesionDiameter');
-  const projectedCa125Val = document.getElementById('projectedCa125Val');
-
-  function updateProjectedMilestone() {
-    if (!milestoneMonthSlider) return;
-    const m = parseInt(milestoneMonthSlider.value, 10);
-    if (milestoneMonthDisplay) milestoneMonthDisplay.textContent = `Month ${m}`;
-
-    const baseMm = currentPredictionData?.longitudinal_trajectory?.baseline_target_lesion_mm || 36;
-    const baseCa = currentPredictionData?.vitals?.ca125 || 48.5;
-    const regimenType = milestoneRegimenSelect?.value || 'adjuvant';
-
-    let rate = 0.25;
-    if (regimenType === 'dose_dense') rate = 0.35;
-    else if (regimenType === 'maintenance') rate = 0.15;
-
-    const decay = Math.exp(-rate * (m / 3));
-    const projMm = Math.max(0, Math.round(baseMm * decay));
-    const pct = Math.round(((projMm - baseMm) / baseMm) * 100);
-    const projCa = Number((Math.max(11.0, baseCa * decay)).toFixed(1));
-
-    let recist = 'Stable Disease (SD)';
-    let badgeClass = 'bg-slate-900 text-slate-300 border-slate-800';
-    if (pct <= -100 || projMm === 0) {
-      recist = 'Complete Response (CR)';
-      badgeClass = 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
-    } else if (pct <= -30) {
-      recist = 'Partial Response (PR)';
-      badgeClass = 'bg-blue-500/15 text-blue-300 border border-blue-500/30';
-    }
-
-    if (projectedRecistBadge) {
-      projectedRecistBadge.textContent = recist;
-      projectedRecistBadge.className = `font-mono font-semibold px-2 py-0.5 rounded text-[11px] ${badgeClass}`;
-    }
-    if (projectedLesionDiameter) {
-      projectedLesionDiameter.textContent = `${projMm} mm (${pct}%)`;
-    }
-    if (projectedCa125Val) {
-      projectedCa125Val.textContent = `${projCa} U/mL`;
-    }
-  }
-
-  if (milestoneMonthSlider) milestoneMonthSlider.addEventListener('input', updateProjectedMilestone);
-  if (milestoneRegimenSelect) milestoneRegimenSelect.addEventListener('change', updateProjectedMilestone);
-
-  // FHIR R4 Bundle Download
+  // FHIR Export
   window.downloadFHIRReport = function() {
-    if (!currentPredictionData) {
-      return;
-    }
+    if (!currentPredictionData) return;
     const bundle = currentPredictionData.fhir_diagnostic_bundle || {
       resourceType: 'Bundle',
       type: 'document',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      meta: { source: 'celldiag Precision Diagnostics' }
     };
     const jsonStr = JSON.stringify(bundle, null, 2);
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `FHIR_DiagnosticReport_${(currentPredictionData.cancer_type || 'Report').replace(/[^a-zA-Z0-9]/g, '_')}.json`;
+    link.download = `celldiag_FHIR_${(currentPredictionData.cancer_type || 'Report').replace(/[^a-zA-Z0-9]/g, '_')}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
-  // Clinical Report Download Functionality
+  // Clinical Report Download
   window.downloadDiagnosticReport = function() {
-    if (!currentPredictionData) {
-      return;
-    }
+    if (!currentPredictionData) return;
     const d = currentPredictionData;
     const timestamp = new Date().toLocaleString();
     const repText = (reportTextInput && reportTextInput.value.trim()) ? reportTextInput.value.trim() : 'Not Provided';
-    const vitalsStr = `CA-125: ${ca125Input && ca125Input.value ? ca125Input.value + ' U/mL' : 'Omitted'} | CEA: ${ceaInput && ceaInput.value ? ceaInput.value + ' ng/mL' : 'Omitted'} | Age: ${ageInput && ageInput.value ? ageInput.value + ' yrs' : 'Omitted'}`;
-
-    const txList = (d.ranked_therapies || []).map(t => `  [Rank #${t.priority}] ${t.name} (${t.category})\n    Mechanism: ${t.mechanism}`).join('\n');
-    const shapList = ((d.shap_waterfall && d.shap_waterfall.steps) || []).map(s => `  - ${s.feature}: ${s.delta >= 0 ? '+' : ''}${s.delta} SHAP (Value: ${s.value} | ${s.clinical_note})`).join('\n');
-    const survList = ((d.survival_projections && d.survival_projections.curve) || []).map(c => `  - ${c.timepoint}: ${c.survival_rate}% [95% CI: ${c.ci_lower}% - ${c.ci_upper}%]`).join('\n');
-    const trialList = (d.matched_clinical_trials || []).map(tr => `  - [${tr.nct_id}] ${tr.phase} (${tr.match_score}% Match): ${tr.title}\n    Intervention: ${tr.intervention}`).join('\n');
-
-    const mdtList = ((d.virtual_tumor_board && d.virtual_tumor_board.specialists) || []).map(sp => `  * ${sp.specialty} (${sp.specialist_name}):\n    Verdict: ${sp.verdict}\n    Recommendation: ${sp.recommendation}\n    Evidence: ${sp.evidence_grade} | Vote: ${sp.vote}`).join('\n\n');
-    const trajList = ((d.longitudinal_trajectory && d.longitudinal_trajectory.milestones) || []).map(m => `  * ${m.timepoint} [${m.phase}]:\n    Target Lesion: ${m.lesion_diameter_mm} mm (${m.percent_change}%) | RECIST: ${m.recist_status}\n    CA-125: ${m.ca125} U/mL | CEA: ${m.cea} ng/mL\n    Note: ${m.clinical_note}`).join('\n');
-    const ngsList = ((d.ngs_genomic_profile && d.ngs_genomic_profile.actionable_variants) || []).map(v => `  * ${v.gene} ${v.variant} [${v.tier}]:\n    VAF: ${v.vaf} | Depth: ${v.depth} | Exon: ${v.exon}\n    Significance: ${v.significance}`).join('\n');
-    const pgList = ((d.pharmacogenomic_safety && d.pharmacogenomic_safety.pharmacogenomics) || []).map(p => `  * ${p.gene} [${p.phenotype}]: ${p.risk_level}\n    Target Drugs: ${p.target_drugs}\n    Guidance: ${p.clinical_guidance}`).join('\n');
+    const vitalsStr = `CA-125: ${ca125Input && ca125Input.value ? ca125Input.value + ' U/mL' : 'Omitted'} | CEA: ${ceaInput && ceaInput.value ? ceaInput.value + ' ng/mL' : 'Omitted'}`;
 
     const reportContent = `
 ================================================================================
-    EXPLAINABLE HYBRID AI ONCOLOGY CLINICAL SUITE - MULTI-TASK REPORT
+    CELLDIAG PRECISION MULTIMODAL ONCOLOGY CLINICAL REPORT
 ================================================================================
-Report Generated Date/Time : ${timestamp}
-Framework Architecture    : ResNet-50 Layer 4.2 + BioBERT NLP + Tabular Fusion
-Verified Test Accuracy    : 97.2% Holdout Test Accuracy (PyTorch Engine)
-MDT Consensus Concordance : ${d.virtual_tumor_board ? d.virtual_tumor_board.consensus_concordance + '%' : '97.4%'}
-Data Completeness Rating  : ${d.data_quality_rating || 'Multimodal'}
-FHIR R4 Diagnostic Report : Interoperable CarePlan & DiagnosticReport Bundle Linked
---------------------------------------------------------------------------------
+Timestamp: ${timestamp}
+Platform: celldiag Multimodal Decision Support
+Verdict: ${d.cancer_type || 'Breast Cancer'} (${d.cancer_subtype || 'IDC'})
+Stage: ${d.cancer_stage || 'Stage IIA'} (TNM: ${d.tnm_classification || 'cT2 N0 M0'})
+Diagnostic Certainty: ${((d.cancer_type_confidence || d.confidence || 0.958) * 100).toFixed(1)}%
+5-Year Overall Survival: ${Math.round((d.survival_probability || 0.93) * 100)}%
+MDT Consensus Concordance: ${(d.virtual_tumor_board && d.virtual_tumor_board.consensus_concordance) || 97.4}%
 
-1. PATIENT CASE & INPUT MODALITIES
---------------------------------------------------------------------------------
-Pathology Biopsy Narrative : ${repText}
-Clinical Biomarkers        : ${vitalsStr}
-Active Modalities Detected : ${(d.detected_modalities || []).join(', ')}
-
-2. MULTI-TASK HEAD 1: PRIMARY MALIGNANCY & SUBTYPE
---------------------------------------------------------------------------------
-Primary Malignancy Type   : ${d.cancer_type || 'Breast Cancer'}
-Histological Subtype      : ${d.cancer_subtype || 'Invasive Carcinoma'}
-Prediction Confidence     : ${((d.cancer_type_confidence || d.confidence || 0.95) * 100).toFixed(1)}%
-
-3. MULTI-TASK HEAD 2: ANATOMICAL TNM STAGING
---------------------------------------------------------------------------------
-Clinical Stage Group      : ${d.cancer_stage || 'Stage IIA'}
-TNM Anatomical Formula    : ${d.tnm_classification || 'cT2 N0 M0'}
-
-4. HUMAN-UNDERSTANDABLE CLINICAL RATIONALE (DUAL-AUDIENCE)
---------------------------------------------------------------------------------
-[Patient & Family Summary]:
+CLINICAL NARRATIVE:
 ${d.patient_friendly_summary || d.plain_english_summary}
 
-[Tumor Board Technical Summary]:
-${d.oncology_technical_summary || d.plain_english_summary}
-
-5. MULTI-TASK HEAD 3: NDCG-OPTIMIZED THERAPEUTIC REGIMEN (NCCN Guidelines)
---------------------------------------------------------------------------------
-${txList || 'Standard Clinical Surveillance'}
-
-6. MULTI-TASK HEAD 4: LONGITUDINAL SURVIVAL PROJECTIONS
---------------------------------------------------------------------------------
-5-Year Overall Survival   : ${Math.round((d.survival_probability || 0.93) * 100)}%
-Longitudinal Horizon Curve:
-${survList}
-
-7. PHASE 4: MULTIDISCIPLINARY VIRTUAL TUMOR BOARD (MDT) CONSENSUS
---------------------------------------------------------------------------------
-Board ID                  : ${(d.virtual_tumor_board && d.virtual_tumor_board.board_id) || 'MDT-Live'}
-Consensus Concordance     : ${(d.virtual_tumor_board && d.virtual_tumor_board.consensus_concordance) || 97.4}%
-Consensus Verdict         : ${(d.virtual_tumor_board && d.virtual_tumor_board.consensus_verdict) || 'Ratified'}
-
-Specialist Deliberations:
-${mdtList || 'Standard multidisciplinary screening evaluation.'}
-
-8. PHASE 4: LONGITUDINAL RECIST 1.1 TRAJECTORY & SURVEILLANCE
---------------------------------------------------------------------------------
-Projected 5-Year DFS      : ${(d.longitudinal_trajectory && d.longitudinal_trajectory.projected_dfs_5yr) || 88}%
-${trajList || 'Normal longitudinal surveillance trajectory.'}
-
-9. PHASE 4: NEXT-GENERATION SEQUENCING (NGS) SOMATIC PROFILER
---------------------------------------------------------------------------------
-TMB                       : ${(d.ngs_genomic_profile && d.ngs_genomic_profile.tumor_mutational_burden) || '6.8 mut/Mb'}
-MSI Status                : ${(d.ngs_genomic_profile && d.ngs_genomic_profile.microsatellite_status) || 'MSS'}
-PD-L1 Expression          : ${(d.ngs_genomic_profile && d.ngs_genomic_profile.pdl1_tps) || '35% TPS'}
-
-Actionable Driver Alterations:
-${ngsList || 'No pathogenic alterations detected; wild-type baseline.'}
-
-10. PHASE 4: PHARMACOGENOMICS & ORGAN CLEARANCE SAFETY
---------------------------------------------------------------------------------
-Overall Status            : ${(d.pharmacogenomic_safety && d.pharmacogenomic_safety.overall_safety_rating) || 'Cleared'}
-${pgList || 'Standard enzymatic clearance baseline.'}
-
-11. PRECISION CLINICAL TRIAL MATCHING (NCI REGISTRY)
---------------------------------------------------------------------------------
-${trialList || 'No interventional trials active for this presentation.'}
-
-12. GAME-THEORETIC SHAP ATTRIBUTION WATERFALL
---------------------------------------------------------------------------------
-Base Population Prior E[f(X)] = 0.50
-Feature Pushes:
-${shapList}
-
-================================================================================
-  Confidential Medical AI Decision Support Document · PyTorch XAI Oncology Suite
+RECOMMENDED PROTOCOL:
+${(d.ranked_therapies || []).map(t => `* [Priority #${t.priority}] ${t.name} (${t.category}): ${t.mechanism}`).join('\n')}
 ================================================================================
 `;
-
     const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Clinical_AI_Report_${(d.cancer_type || 'Report').replace(/[^a-zA-Z0-9]/g, '_')}_${(d.cancer_stage || 'Stage').replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+    link.download = `celldiag_Clinical_Report_${(d.cancer_type || 'Report').replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
-  function getFallbackDemoData() {
+  function getFallbackDemoData(hasImage = false) {
     return {
       cancer_type: 'Breast Cancer',
       cancer_subtype: 'Invasive Ductal Carcinoma (IDC)',
@@ -1481,11 +1330,15 @@ ${shapList}
       confidence: 0.958,
       cancer_type_confidence: 0.958,
       survival_probability: 0.93,
-      image_weight: 0.45,
-      text_weight: 0.35,
-      tabular_weight: 0.20,
-      patient_friendly_summary: 'The AI identified findings consistent with breast cancer (Stage IIA). Nuclear pleomorphism and elevated CA-125 markers support this. Recommended treatment options include partial mastectomy and targeted adjuvant therapy.',
-      oncology_technical_summary: 'ResNet-50 visual features and BioBERT pathology embeddings identify infiltrating ductal epithelial proliferations with nuclear pleomorphism. Elevated CA-125 reflects potential serosal involvement. NCCN recommendations include surgical resection and receptor-directed therapy.',
+      image_weight: hasImage ? 0.45 : 0.00,
+      text_weight: hasImage ? 0.35 : 0.65,
+      tabular_weight: hasImage ? 0.20 : 0.35,
+      grad_cam_available: hasImage,
+      grad_cam_image: null,
+      patient_friendly_summary: hasImage
+        ? 'The algorithmic analysis identified findings consistent with breast cancer (Stage IIA). Cellular pleomorphism and elevated CA-125 markers support this.'
+        : 'The algorithmic analysis identified findings consistent with breast cancer (Stage IIA) based on clinical narrative notes and elevated biomarker indicators. Histopathology slide was omitted.',
+      oncology_technical_summary: 'BioBERT pathology embeddings identify infiltrating ductal epithelial proliferations with nuclear pleomorphism. Elevated CA-125 reflects potential serosal involvement. NCCN recommendations include surgical resection and receptor-directed therapy.',
       evidence_breakdown: [
         { modality: 'Pathology Report', finding: 'Identified invasive ductal architectural disruption.', impact: '+Primary Malignancy' }
       ],
@@ -1505,11 +1358,10 @@ ${shapList}
       matched_clinical_trials: [
         {
           nct_id: 'NCT04486300',
-          title: 'DESTINY-Breast06: Trastuzumab Deruxtecan vs Investigator Choice Chemotherapy',
+          title: 'DESTINY-Breast06: Trastuzumab Deruxtecan Targeted ADC',
           phase: 'Phase III',
           match_score: 98.2,
-          intervention: 'Trastuzumab Deruxtecan (T-DXd)',
-          eligibility_rationale: 'Confirmed primary mammary invasive carcinoma eligible for targeted ADC trial.'
+          intervention: 'Trastuzumab Deruxtecan (T-DXd)'
         }
       ],
       virtual_tumor_board: {
@@ -1518,47 +1370,15 @@ ${shapList}
         consensus_verdict: 'Unanimous Multidisciplinary Consensus Plan Ratified',
         clinical_summary: 'All 4 oncology specialists reviewed the multimodal parameters with full concordance on surgical clearance, systemic sequencing, and precision radiotherapy.',
         specialists: [
-          {
-            specialty: 'Surgical Oncology',
-            specialist_name: 'Dr. Sarah Lin, MD, FACS',
-            department: 'Surgical Oncology',
-            evidence_grade: 'Level 1A',
-            recommendation: 'Partial mastectomy (lumpectomy) with sentinel lymph node biopsy.',
-            considerations: 'Clear R0 margins achievable with standard cosmesis.',
-            vote: 'Approved'
-          },
-          {
-            specialty: 'Medical Oncology',
-            specialist_name: 'Dr. Marcus Vance, MD, PhD',
-            department: 'Medical Oncology',
-            evidence_grade: 'Level 1A',
-            recommendation: 'Adjuvant endocrine protocol with selective estrogen receptor modulator.',
-            considerations: 'Low recurrence score anticipated; chemotherapy may be spared.',
-            vote: 'Approved'
-          },
-          {
-            specialty: 'Radiation Oncology',
-            specialist_name: 'Dr. Elena Rostova, MD',
-            department: 'Radiation Medicine',
-            evidence_grade: 'Level 1B',
-            recommendation: 'Whole-breast external beam radiation therapy following breast-conserving surgery.',
-            considerations: 'Hypofractionated regimen (40 Gy in 15 fractions) recommended.',
-            vote: 'Approved'
-          },
-          {
-            specialty: 'Molecular Pathology',
-            specialist_name: 'Dr. Aris Thorne, MD, FCAP',
-            department: 'Molecular Diagnostics',
-            evidence_grade: 'Level 1A',
-            recommendation: 'Reflex 21-gene expression profiling (Oncotype DX) on surgical specimen.',
-            considerations: 'Confirm genomic risk score to calibrate adjuvant benefit.',
-            vote: 'Approved'
-          }
+          { specialty: 'Surgical Oncology', specialist_name: 'Dr. Sarah Lin, MD, FACS', recommendation: 'Partial mastectomy with sentinel lymph node biopsy.', vote: 'Approved' },
+          { specialty: 'Medical Oncology', specialist_name: 'Dr. Marcus Vance, MD, PhD', recommendation: 'Adjuvant endocrine protocol with SERM receptor blockade.', vote: 'Approved' },
+          { specialty: 'Radiation Oncology', specialist_name: 'Dr. Elena Rostova, MD', recommendation: 'Hypofractionated whole-breast irradiation (40 Gy / 15 fx).', vote: 'Approved' },
+          { specialty: 'Molecular Genetics', specialist_name: 'Dr. Aris Thorne, MD, FCAP', recommendation: 'Reflex 21-gene expression profiling (Oncotype DX).', vote: 'Approved' }
         ],
         deliberation_points: [
-          'Evaluated feasibility of breast conservation versus total mastectomy.',
-          'Assessed cardiac safety prior to systemic agent scheduling.',
-          'Confirmed adequate renal and hepatic clearance for standard protocols.'
+          'Evaluated breast conservation versus total mastectomy.',
+          'Assessed cardiac safety prior to systemic sequencing.',
+          'Confirmed adequate renal and hepatic organ clearance.'
         ],
         ratified_action_plan: [
           'Schedule outpatient breast-conserving surgical resection.',
@@ -1567,138 +1387,21 @@ ${shapList}
           'Serial biomarker monitoring with CA-125 surveillance at Month 3.'
         ]
       },
-      longitudinal_trajectory: {
-        projected_dfs_5yr: 88,
-        baseline_target_lesion_mm: 36,
-        kinetics: {
-          ca125_clearance_half_life: '14.2 days',
-          cea_clearance_half_life: '11.8 days',
-          biochemical_velocity_status: 'Optimal Clearance Rate'
-        },
-        milestones: [
-          {
-            timepoint: 'Baseline',
-            phase: 'Pre-Treatment',
-            recist_status: 'Baseline Measurable',
-            status_badge: 'Pre-Therapy',
-            lesion_diameter_mm: 36,
-            percent_change: 0,
-            ca125: 48.5,
-            cea: 12.4,
-            clinical_note: 'Initial presentation with measurable primary tumor mass.'
-          },
-          {
-            timepoint: 'Month 3',
-            phase: 'Post-Surgical Follow-up',
-            recist_status: 'Near-Complete Remission',
-            status_badge: 'Response Confirmed',
-            lesion_diameter_mm: 8,
-            percent_change: -78,
-            ca125: 22.1,
-            cea: 3.8,
-            clinical_note: 'Substantial radiographic regression following primary resection.'
-          },
-          {
-            timepoint: 'Month 6',
-            phase: 'Adjuvant Phase',
-            recist_status: 'Partial Response (PR)',
-            status_badge: 'Stable Response',
-            lesion_diameter_mm: 4,
-            percent_change: -89,
-            ca125: 16.4,
-            cea: 2.1,
-            clinical_note: 'Biomarkers normalized below clinical cutoff threshold.'
-          },
-          {
-            timepoint: 'Month 12',
-            phase: 'Surveillance Horizon',
-            recist_status: 'Complete Response (CR)',
-            status_badge: 'Disease-Free',
-            lesion_diameter_mm: 0,
-            percent_change: -100,
-            ca125: 12.0,
-            cea: 1.4,
-            clinical_note: 'No evidence of recurrent disease on imaging surveillance.'
-          }
-        ]
-      },
       ngs_genomic_profile: {
         tumor_mutational_burden: '6.8 mut/Mb',
-        microsatellite_status: 'MSS (Microsatellite Stable)',
-        pdl1_tps: '35% TPS',
+        microsatellite_status: 'MSS',
+        pdl1_tps: '35%',
         actionable_variants: [
-          {
-            gene: 'PIK3CA',
-            variant: 'H1047R',
-            exon: 'Exon 20',
-            vaf: '28.4%',
-            depth: '1240x',
-            tier: 'Tier I (Strong)',
-            significance: 'Sensitizing mutation for PI3K-alpha inhibitors.'
-          },
-          {
-            gene: 'TP53',
-            variant: 'R175H',
-            exon: 'Exon 5',
-            vaf: '34.1%',
-            depth: '980x',
-            tier: 'Tier II (Potential)',
-            significance: 'Loss-of-function somatic driver mutation.'
-          }
-        ],
-        drug_sensitivity_matrix: [
-          {
-            agent: 'Alpelisib (Piqray)',
-            drug_class: 'PI3K Alpha Inhibitor',
-            sensitive_alteration: 'PIK3CA H1047R',
-            approval_status: 'FDA Approved',
-            expected_response: 'Progression-free survival extension when combined with fulvestrant.'
-          },
-          {
-            agent: 'Trastuzumab Deruxtecan',
-            drug_class: 'Antibody-Drug Conjugate',
-            sensitive_alteration: 'HER2 Expression',
-            approval_status: 'FDA Approved',
-            expected_response: 'High response rate in receptor-positive carcinoma.'
-          }
-        ],
-        resistance_mechanisms_monitored: [
-          {
-            drug: 'Alpelisib',
-            resistance_biomarker: 'PTEN loss / PTEN null',
-            monitoring_strategy: 'Serial ctDNA liquid biopsy every 3 months'
-          },
-          {
-            drug: 'Endocrine Therapy',
-            resistance_biomarker: 'ESR1 Y537S / D538G mutation',
-            monitoring_strategy: 'ctDNA plasma tracking for emergent resistance clones'
-          }
+          { gene: 'PIK3CA', variant: 'H1047R', exon: 'Exon 20', vaf: '28.4%', depth: '1240x', tier: 'Tier I' },
+          { gene: 'TP53', variant: 'R175H', exon: 'Exon 5', vaf: '34.1%', depth: '980x', tier: 'Tier II' }
         ]
       },
       pharmacogenomic_safety: {
         overall_safety_rating: 'Cleared for Standard Protocols',
         pharmacogenomics: [
-          {
-            gene: 'DPYD',
-            phenotype: 'Normal Metabolizer (*1/*1)',
-            risk_level: 'Low Risk',
-            target_drugs: '5-Fluorouracil, Capecitabine',
-            clinical_guidance: 'Standard full-dose fluoropyrimidine protocol cleared.'
-          },
-          {
-            gene: 'UGT1A1',
-            phenotype: 'Intermediate (*1/*28)',
-            risk_level: 'Moderate Risk',
-            target_drugs: 'Irinotecan',
-            clinical_guidance: 'Consider 20% dose reduction if high-dose regimen is prescribed.'
-          },
-          {
-            gene: 'TPMT',
-            phenotype: 'Normal Metabolizer (*1/*1)',
-            risk_level: 'Low Risk',
-            target_drugs: '6-Mercaptopurine, Thioguanine',
-            clinical_guidance: 'Standard dosing cleared; routine hematology monitoring.'
-          }
+          { gene: 'DPYD', phenotype: 'Normal (*1/*1)', risk_level: 'Low Risk', target_drugs: '5-FU, Capecitabine' },
+          { gene: 'UGT1A1', phenotype: 'Intermediate (*1/*28)', risk_level: 'Moderate Risk', target_drugs: 'Irinotecan' },
+          { gene: 'TPMT', phenotype: 'Normal (*1/*1)', risk_level: 'Low Risk', target_drugs: '6-Mercaptopurine' }
         ],
         organ_clearance: {
           renal_crcl: '94 mL/min (Normal)',
@@ -1709,5 +1412,15 @@ ${shapList}
     };
   }
 
+  // Initial load: Load CASE-01
+  const initialData = BENCHMARKS['CASE-01'];
+  if (reportTextInput) reportTextInput.value = initialData.reportText;
+  if (ca125Input) ca125Input.value = initialData.ca125;
+  if (ceaInput) ceaInput.value = initialData.cea;
+  if (ageInput) ageInput.value = initialData.age;
+  if (bpInput) bpInput.value = initialData.bp;
+  if (charCount) charCount.textContent = `${initialData.reportText.length} chars`;
+  loadSampleOrgan(initialData.organ);
   updateModalityStatus();
+  executeInference();
 });

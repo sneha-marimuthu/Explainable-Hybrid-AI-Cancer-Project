@@ -3,1048 +3,1016 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explainable Hybrid AI Cancer Diagnosis Suite</title>
-  <meta name="description" content="Multimodal XAI clinical decision support suite for histopathology, BioBERT NLP reports, and clinical biomarker fusion with Grad-CAM and SHAP.">
-  <meta property="og:title" content="Explainable Hybrid AI Cancer Diagnosis Suite">
-  <meta property="og:description" content="Multimodal XAI clinical decision support suite for histopathology, BioBERT NLP reports, and clinical biomarker fusion with Grad-CAM and SHAP.">
+  <title>celldiag — Precision Multimodal Oncology Diagnostics</title>
+  <meta name="description" content="celldiag: Clinical decision support platform for multimodal histopathology, molecular biomarkers, and precision oncology analysis.">
+  <meta property="og:title" content="celldiag — Precision Multimodal Oncology Diagnostics">
+  <meta property="og:description" content="celldiag: Clinical decision support platform for multimodal histopathology, molecular biomarkers, and precision oncology analysis.">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/styles.css?v=4.1.0">
+  <link rel="stylesheet" href="css/styles.css?v=6.0.0">
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
-          },
-          colors: {
-            slate: {
-              950: '#0b0f17',
-              900: '#111827',
-              800: '#1f2937',
-              700: '#374151',
-              600: '#4b5563',
-            }
           }
         }
       }
     }
   </script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 selection:bg-blue-600 selection:text-white">
+<body class="min-h-screen pb-16">
 
-  <!-- Header Navbar (Clean Minimalist 3-Zone) -->
-  <header class="border-b border-slate-800 bg-slate-950/95 backdrop-blur-sm sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+  <!-- Simple Header (celldiag Clean Clinical Style) -->
+  <header class="border-b border-[#2c3036] bg-[#111315]/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       
-      <!-- Brand Zone -->
+      <!-- Clean Brand (Problem 7 & 8: celldiag) -->
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700/80 flex items-center justify-center font-semibold text-slate-200 text-sm shadow-sm">
-          AI
+        <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-sm font-bold text-base">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+          </svg>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-sm font-semibold tracking-tight text-white">
-              Explainable Hybrid AI
-            </h1>
-            <span class="hidden sm:inline-block px-2 py-0.5 text-[11px] font-mono text-slate-400 bg-slate-900 rounded border border-slate-800">
-              Clinical Decision Support
-            </span>
+            <span class="text-lg font-bold tracking-tight text-white">celldiag</span>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-semibold">97.2% Concordance</span>
           </div>
-          <p class="text-xs text-slate-400">ResNet-50 Vision · BioBERT NLP · Tabular SHAP · MDT Consensus · NGS Profiling</p>
+          <p class="text-xs text-slate-400 hidden sm:block">Multimodal Precision Oncology Analysis</p>
         </div>
       </div>
 
-      <!-- Navigation Page Tabs -->
-      <nav class="hidden md:flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
-        <button id="navInputsTab" type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm flex items-center gap-1.5 cursor-pointer">
-          Page 1: Case Inputs
+      <!-- Quick Benchmark Presets In Header -->
+      <div class="hidden md:flex items-center gap-1.5 p-1 rounded-xl bg-[#181a1d] border border-[#2c3036] text-xs">
+        <span class="px-2 text-[11px] font-semibold text-slate-400">Presets:</span>
+        <button type="button" class="preset-btn px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-[#202327] font-medium transition-colors cursor-pointer" data-case="CASE-01">
+          Breast IDC
         </button>
-        <button id="navReportTab" type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-white flex items-center gap-1.5 cursor-pointer">
-          Page 2: Diagnostic &amp; Tumor Board Report
+        <button type="button" class="preset-btn px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-[#202327] font-medium transition-colors cursor-pointer" data-case="CASE-02">
+          Lung LUAD
         </button>
-      </nav>
+        <button type="button" class="preset-btn px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-[#202327] font-medium transition-colors cursor-pointer" data-case="CASE-03">
+          Colon Adeno
+        </button>
+        <button type="button" class="preset-btn px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-[#202327] font-medium transition-colors cursor-pointer" data-case="CASE-04">
+          Healthy Tissue
+        </button>
+      </div>
 
-      <!-- Action & Status Zone -->
-      <div class="flex items-center gap-2.5 text-xs font-medium">
-        <button id="themeToggleBtn" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer text-xs shadow-sm">
-          <span id="themeIcon">☀️</span> <span id="themeText">Light Mode</span>
+      <!-- Right Controls: Custom Input & Dark/Light Mode -->
+      <div class="flex items-center gap-2">
+        <button id="toggleInputPanelBtn" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition-colors cursor-pointer shadow-sm">
+          <span>+</span>
+          <span>Custom Input</span>
         </button>
 
-        <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-300">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>System Ready</span>
-        </div>
-
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-300 font-mono text-xs">
-          <span id="modelAccuracyHeader">Model Accuracy 97.2%</span>
-        </div>
+        <button id="themeToggleBtn" type="button" class="p-2 rounded-xl bg-[#181a1d] border border-[#2c3036] text-slate-300 hover:text-white transition-colors cursor-pointer" title="Toggle Light/Dark Theme">
+          <span id="themeIcon">🌙</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+  <!-- Full-Width Responsive Main Experience -->
+  <main class="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
 
-    <!-- PAGE 1: CLINICAL CASE INPUTS & PARAMETERS -->
-    <div id="inputsPage" class="space-y-6">
-      
-      <!-- Top Hero Banner (Modern Minimalist Clean Layout) -->
-      <div class="p-6 sm:p-8 rounded-xl glass-panel border border-slate-800/90 relative overflow-hidden">
-        <div class="max-w-3xl">
-          <div class="text-xs font-semibold uppercase tracking-wider text-blue-400 mb-2">
-            Multimodal Oncology Clinical Suite
+    <!-- PROBLEM 1: Prominent Modality Incongruence / Conflict Alert Banner -->
+    <div id="modalityConflictBanner" class="hidden p-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 text-amber-200">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-base flex-shrink-0">
+            ⚠️
           </div>
-          <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-2.5">
-            Automated Cancer Analysis with Flexible Partial Inputs
-          </h2>
-          <p class="text-slate-300 text-sm leading-relaxed mb-4">
-            Provide available clinical data — histopathology slide images, clinical pathology notes, or serum tumor biomarkers. Inputs are flexible and optional. The hybrid multimodal system identifies malignancy, determines TNM stage, calculates survival estimates, and provides transparent explanations.
-          </p>
-
-          <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-            <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300">ResNet-50 Vision (Layer 4.2)</span>
-            <span class="text-slate-600">·</span>
-            <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300">BioBERT NLP (De-Identified)</span>
-            <span class="text-slate-600">·</span>
-            <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300">Game-Theoretic SHAP</span>
-            <span class="text-slate-600">·</span>
-            <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300">Counterfactual Simulation</span>
-            <span class="text-slate-600">·</span>
-            <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300">Virtual MDT Board</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Test Benchmark Presets -->
-      <div class="glass-panel p-4 border border-slate-800 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-        <div class="flex items-center gap-2 text-slate-300">
-          <span class="font-semibold uppercase tracking-wider text-slate-400 text-[11px]">Benchmark Clinical Presets:</span>
-        </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button type="button" class="preset-btn px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 hover:border-slate-600 text-slate-300 hover:text-white font-medium transition-colors cursor-pointer" data-case="CASE-01">
-            Breast: Invasive Ductal (IDC)
-          </button>
-          <button type="button" class="preset-btn px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 hover:border-slate-600 text-slate-300 hover:text-white font-medium transition-colors cursor-pointer" data-case="CASE-02">
-            Lung: Adenocarcinoma (LUAD)
-          </button>
-          <button type="button" class="preset-btn px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 hover:border-slate-600 text-slate-300 hover:text-white font-medium transition-colors cursor-pointer" data-case="CASE-03">
-            Colon: Colorectal Adeno
-          </button>
-          <button type="button" class="preset-btn px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 hover:border-slate-600 text-slate-300 hover:text-white font-medium transition-colors cursor-pointer" data-case="CASE-04">
-            Healthy Non-Malignant Tissue
-          </button>
-          <button type="button" id="clearInputsBtn" class="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white font-medium transition-colors cursor-pointer">
-            Clear All
-          </button>
-        </div>
-      </div>
-
-      <!-- Main Input Form Card -->
-      <form id="diagnosisForm" class="max-w-4xl mx-auto glass-panel p-6 sm:p-8 space-y-6 border border-slate-800 rounded-xl shadow-sm">
-        
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 gap-2">
           <div>
-            <h3 class="text-lg font-bold text-white tracking-tight">
-              Patient Clinical Findings
-            </h3>
-            <p class="text-xs text-slate-400 mt-0.5">Provide any combination of inputs. The model fuses available modalities automatically.</p>
+            <div class="flex items-center gap-2">
+              <h4 id="conflictBannerTitle" class="font-bold text-amber-300 text-sm">Clinical Modality Incongruence Flagged</h4>
+              <span id="conflictSeverityBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase font-semibold">High Discordance</span>
+            </div>
+            <p id="conflictBannerSummary" class="text-xs text-amber-200/90 mt-1 leading-relaxed">
+              Uploaded histology slide demonstrates pulmonary/lung tissue morphology, but the pathology text describes central nervous system glioblastoma.
+            </p>
+            <p id="conflictBannerAction" class="text-[11px] text-amber-300/80 font-mono mt-1.5">
+              Action Required: Verify patient accession number to ensure slide and clinical notes originate from the same patient.
+            </p>
           </div>
-          <span class="text-xs font-mono text-slate-400 px-2.5 py-1 bg-slate-900 rounded border border-slate-800 w-max">
-            Page 1 of 2
+        </div>
+        <button id="dismissConflictBtn" type="button" class="text-amber-400 hover:text-amber-200 text-xs px-2 py-1 rounded bg-amber-500/20 cursor-pointer flex-shrink-0">
+          Dismiss ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible Custom Input Drawer -->
+    <div id="customInputDrawer" class="hidden transition-all duration-300">
+      <div class="glass-panel p-5 sm:p-6 border border-[#2c3036] space-y-5">
+        <div class="flex items-center justify-between border-b border-[#2c3036] pb-3">
+          <div>
+            <h3 class="text-base font-bold text-white">Custom Patient Case Ingestion</h3>
+            <p class="text-xs text-slate-400">Provide any combination of slide, biopsy narrative, and clinical biomarkers.</p>
+          </div>
+          <button id="closeInputDrawerBtn" type="button" class="text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-[#202327] cursor-pointer">
+            Close ✕
+          </button>
+        </div>
+
+        <!-- Inline Live Discordance Warning within Drawer -->
+        <div id="drawerDiscordanceWarning" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span>⚠️</span>
+            <span id="drawerDiscordanceText">Input Conflict: Narrative tissue type does not match histology slide organ.</span>
+          </div>
+          <button type="button" id="autoFixConflictBtn" class="text-[11px] text-amber-200 underline font-semibold cursor-pointer">Re-align slide</button>
+        </div>
+
+        <form id="diagnosisForm" novalidate class="space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            
+            <!-- PROBLEM 4: Slide Ingestion with Clear Sample Descriptions & Always-Available Browse Option -->
+            <div class="fade-in-field space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                  <span>Histology Slide</span>
+                  <span class="has-tooltip relative inline-flex items-center">
+                    <button type="button" class="info-btn" aria-label="Description">i</button>
+                    <span class="human-tooltip absolute bottom-full mb-1 left-0 w-64 p-2.5 rounded-xl text-xs">
+                      H&E stained biopsy tissue. Load a clinical sample or browse an image from your computer.
+                    </span>
+                  </span>
+                </label>
+                
+                <!-- Quick sample selector menu -->
+                <div class="flex items-center gap-1">
+                  <span class="text-[10px] text-slate-400">Samples:</span>
+                  <button type="button" id="loadSampleBreastBtn" class="text-blue-400 hover:underline text-[11px] font-medium cursor-pointer">Breast</button>
+                  <span class="text-slate-600">·</span>
+                  <button type="button" id="loadSampleLungBtn" class="text-blue-400 hover:underline text-[11px] font-medium cursor-pointer">Lung</button>
+                  <span class="text-slate-600">·</span>
+                  <button type="button" id="loadSampleColonBtn" class="text-blue-400 hover:underline text-[11px] font-medium cursor-pointer">Colon</button>
+                </div>
+              </div>
+
+              <!-- Dropzone Container -->
+              <div id="dropZone" class="border border-dashed border-[#3d434b] hover:border-blue-500/60 bg-[#111315] rounded-xl p-3.5 text-center cursor-pointer transition-colors relative">
+                <input type="file" id="imageInput" accept="image/*" class="hidden">
+                
+                <div id="dropZonePrompt" class="space-y-1">
+                  <p id="dropZoneText" class="text-xs text-slate-300">Drop slide tile or <span class="text-blue-400 underline font-semibold">browse file</span></p>
+                  <p class="text-[10px] text-slate-500">Supports H&E WSI, PNG, JPG (224x224 tile)</p>
+                </div>
+
+                <!-- Explicit Information of Loaded Sample / File -->
+                <div id="sampleLoadedInfo" class="hidden mt-2 p-2 rounded-lg bg-[#181a1d] border border-[#2c3036] text-left">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="space-y-0.5">
+                      <span class="text-[10px] uppercase font-bold text-blue-400 block" id="sampleTypeBadge">Active Specimen</span>
+                      <p id="sampleNameText" class="text-xs font-semibold text-white leading-tight">Breast Ductal Carcinoma H&E (40x)</p>
+                      <p id="sampleOrganText" class="text-[10px] text-slate-400 font-mono">Organ: Breast (Mammary Gland)</p>
+                    </div>
+                    <img id="imagePreview" src="" alt="Preview" class="w-14 h-14 object-cover rounded-lg border border-slate-700 flex-shrink-0">
+                  </div>
+                  
+                  <!-- Always visible Browse & Clear actions (Problem 4 fix) -->
+                  <div class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#2c3036]">
+                    <button type="button" id="changeSlideBtn" class="text-[11px] text-blue-400 hover:text-blue-300 font-semibold cursor-pointer flex items-center gap-1">
+                      📁 Browse / Change File
+                    </button>
+                    <button type="button" id="clearSlideBtn" class="text-[11px] text-rose-400 hover:text-rose-300 font-medium cursor-pointer">
+                      ✕ Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pathology Notes -->
+            <div class="fade-in-field space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                  <span>Pathology Biopsy Notes</span>
+                  <span class="has-tooltip relative inline-flex items-center">
+                    <button type="button" class="info-btn" aria-label="Description">i</button>
+                    <span class="human-tooltip absolute bottom-full mb-1 left-0 w-64 p-2.5 rounded-xl text-xs">
+                      Clinical pathology text, surgical notes, immunohistochemistry status (e.g. ER/PR, HER2, EGFR).
+                    </span>
+                  </span>
+                </label>
+                <div class="text-[10px] text-slate-500 font-mono" id="charCount">0 chars</div>
+              </div>
+              <textarea id="reportTextInput" rows="4" class="w-full bg-[#111315] border border-[#3d434b] text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-blue-500 font-mono resize-none placeholder:text-slate-600" placeholder="Paste biopsy text (e.g. 'Invasive ductal carcinoma of breast, high mitotic index, ER/PR negative, HER2 positive')..."></textarea>
+            </div>
+
+            <!-- PROBLEM 2: Biomarkers & Age with Clear Labels, Descriptions & Units -->
+            <div class="fade-in-field space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                  <span>Biomarkers &amp; Patient Vitals</span>
+                  <span class="has-tooltip relative inline-flex items-center">
+                    <button type="button" class="info-btn" aria-label="Description">i</button>
+                    <span class="human-tooltip absolute bottom-full mb-1 right-0 w-72 p-2.5 rounded-xl text-xs">
+                      Key blood tumor markers and clinical vitals. Each field shows its standard medical unit and normal clinical reference cutoff.
+                    </span>
+                  </span>
+                </label>
+                <span class="text-[10px] text-slate-500 font-mono">Reference Values Included</span>
+              </div>
+
+              <!-- 4 Distinct Clinical Cards with Units & Descriptions -->
+              <div class="grid grid-cols-2 gap-2.5">
+                
+                <!-- Age Input Card -->
+                <div class="p-2.5 rounded-xl bg-[#111315] border border-[#2c3036] space-y-1">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-bold text-slate-300">Patient Age</span>
+                    <span class="text-[10px] text-slate-400 font-mono">18–100 yrs</span>
+                  </div>
+                  <div class="relative flex items-center">
+                    <input type="number" id="ageInput" min="1" max="120" placeholder="58" class="w-full bg-[#181a1d] border border-[#2c3036] text-slate-200 font-mono text-xs rounded-lg py-1.5 pl-2 pr-9 focus:outline-none focus:border-blue-500">
+                    <span class="absolute right-2 text-[10px] font-mono text-slate-400 pointer-events-none">years</span>
+                  </div>
+                  <span class="text-[9px] text-slate-500 block">Baseline demographic</span>
+                </div>
+
+                <!-- CA-125 Input Card -->
+                <div class="p-2.5 rounded-xl bg-[#111315] border border-[#2c3036] space-y-1">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-bold text-slate-300 flex items-center gap-1">
+                      <span>CA-125</span>
+                      <span class="has-tooltip relative inline-flex items-center">
+                        <button type="button" class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</button>
+                        <span class="human-tooltip absolute bottom-full mb-1 right-0 w-64 p-2 rounded-lg text-xs">
+                          Ovarian/breast antigen marker. Normal healthy baseline is strictly below 35 U/mL.
+                        </span>
+                      </span>
+                    </span>
+                    <span class="text-[10px] text-emerald-400 font-mono">&lt; 35 U/mL</span>
+                  </div>
+                  <div class="relative flex items-center">
+                    <input type="number" step="0.1" id="ca125Input" placeholder="48.5" class="w-full bg-[#181a1d] border border-[#2c3036] text-slate-200 font-mono text-xs rounded-lg py-1.5 pl-2 pr-9 focus:outline-none focus:border-blue-500">
+                    <span class="absolute right-2 text-[10px] font-mono text-slate-400 pointer-events-none">U/mL</span>
+                  </div>
+                  <span class="text-[9px] text-slate-500 block">Tumor antigen cutoff</span>
+                </div>
+
+                <!-- CEA Input Card -->
+                <div class="p-2.5 rounded-xl bg-[#111315] border border-[#2c3036] space-y-1">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-bold text-slate-300 flex items-center gap-1">
+                      <span>CEA Antigen</span>
+                      <span class="has-tooltip relative inline-flex items-center">
+                        <button type="button" class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</button>
+                        <span class="human-tooltip absolute bottom-full mb-1 left-0 w-64 p-2 rounded-lg text-xs">
+                          Carcinoembryonic antigen. Normal cutoff is under 3.0 ng/mL. Elevated in colon &amp; lung neoplasms.
+                        </span>
+                      </span>
+                    </span>
+                    <span class="text-[10px] text-emerald-400 font-mono">&lt; 3.0 ng/mL</span>
+                  </div>
+                  <div class="relative flex items-center">
+                    <input type="number" step="0.1" id="ceaInput" placeholder="12.4" class="w-full bg-[#181a1d] border border-[#2c3036] text-slate-200 font-mono text-xs rounded-lg py-1.5 pl-2 pr-10 focus:outline-none focus:border-blue-500">
+                    <span class="absolute right-2 text-[10px] font-mono text-slate-400 pointer-events-none">ng/mL</span>
+                  </div>
+                  <span class="text-[9px] text-slate-500 block">Colorectal/lung marker</span>
+                </div>
+
+                <!-- BP Input Card -->
+                <div class="p-2.5 rounded-xl bg-[#111315] border border-[#2c3036] space-y-1">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-bold text-slate-300">Blood Pressure</span>
+                    <span class="text-[10px] text-slate-400 font-mono">Systolic</span>
+                  </div>
+                  <div class="relative flex items-center">
+                    <input type="number" id="bpInput" placeholder="135" class="w-full bg-[#181a1d] border border-[#2c3036] text-slate-200 font-mono text-xs rounded-lg py-1.5 pl-2 pr-11 focus:outline-none focus:border-blue-500">
+                    <span class="absolute right-2 text-[10px] font-mono text-slate-400 pointer-events-none">mmHg</span>
+                  </div>
+                  <span class="text-[9px] text-slate-500 block">Normal 90–140 mmHg</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Modality Animated Progress Bar -->
+          <div class="fade-in-field p-3.5 rounded-xl bg-[#111315] border border-[#2c3036] space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span id="modalityCountText" class="text-slate-300 font-medium">0 of 3 modalities provided</span>
+              <div class="flex items-center gap-2">
+                <span id="completenessBadge" class="text-[11px] font-mono px-2 py-0.5 rounded bg-[#181a1d] text-slate-400 border border-[#2c3036]">Awaiting Input</span>
+                <span id="modalityPercentText" class="font-mono font-bold text-white text-xs">0%</span>
+              </div>
+            </div>
+            <div class="w-full h-2 bg-[#202327] rounded-full overflow-hidden">
+              <div id="modalityProgressBar" class="progress-fill h-full bg-blue-600 rounded-full" style="width: 0%;"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-[11px] text-slate-400">
+              <div id="statusModImage" class="p-1.5 rounded bg-[#181a1d] text-center truncate">Slide: None</div>
+              <div id="statusModText" class="p-1.5 rounded bg-[#181a1d] text-center truncate">Notes: None</div>
+              <div id="statusModVitals" class="p-1.5 rounded bg-[#181a1d] text-center truncate">Biomarkers: None</div>
+            </div>
+          </div>
+
+          <!-- Real-Time Calculation Feedback Banner within Drawer -->
+          <div id="drawerCalculationSuccess" class="hidden p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-start gap-2.5">
+                <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm flex-shrink-0">✓</span>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-emerald-300 uppercase text-[10px] tracking-wider">Analysis Computed</span>
+                    <span id="drawerCalculatedVerdict" class="font-bold text-white text-xs">Breast Cancer · Stage IIA (cT2 N0 M0)</span>
+                  </div>
+                  <div class="text-[11px] text-slate-300 font-mono mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <span>Certainty: <strong id="drawerCalculatedConf" class="text-blue-400">95.8%</strong></span>
+                    <span>·</span>
+                    <span>5-Yr Survival: <strong id="drawerCalculatedSurv" class="text-emerald-400">93%</strong></span>
+                    <span>·</span>
+                    <span id="drawerCalculatedModalities" class="text-purple-300 font-semibold">Tri-Modal Active</span>
+                  </div>
+                </div>
+              </div>
+              <button type="button" id="scrollToResultsBtn" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1 cursor-pointer flex-shrink-0">
+                <span>View Full Analysis Below</span> <span>↓</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-1">
+            <button type="button" id="clearInputsBtn" class="px-3 py-1.5 rounded-lg bg-[#202327] hover:bg-[#2c3036] text-slate-300 text-xs font-semibold cursor-pointer">
+              Reset Fields
+            </button>
+            <button type="submit" id="runInferenceBtn" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors cursor-pointer flex items-center gap-1.5">
+              <span>⚡</span> Run Diagnostic Analysis
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- HIGH PRIORITY SECTION 1: CORE PREDICTION & BIG VALUES          -->
+    <!-- ============================================================== -->
+    <div class="glass-panel p-6 sm:p-8 space-y-6">
+      
+      <!-- Top Title with Info Icon (Problem 5: i icon) -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2c3036] pb-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Primary Malignancy Verdict</span>
+            
+            <!-- Info Icon Tooltip -->
+            <span class="has-tooltip relative inline-flex items-center">
+              <button type="button" class="info-btn" aria-label="Description">i</button>
+              <span class="human-tooltip absolute bottom-full mb-2 left-0 sm:left-1/2 sm:-translate-x-1/2 w-72 p-3 rounded-xl text-xs z-50">
+                <strong class="text-blue-400 block mb-1">Primary Finding:</strong>
+                This is the computational pathology verdict. It classifies the precise cancer type, staging, and provides an exact statistical certainty level.
+              </span>
+            </span>
+          </div>
+
+          <h2 id="resCancerType" class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Breast Cancer
+          </h2>
+          <p id="resSubtype" class="text-sm font-semibold text-slate-400 mt-0.5">
+            Invasive Ductal Carcinoma (IDC)
+          </p>
+        </div>
+
+        <!-- Calculated High Priority Metrics with PROBLEM 6: "Why is this calculated?" links -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+          
+          <!-- Metric 1: Stage -->
+          <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036] text-center flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 block mb-0.5">Stage</span>
+              <span id="resCancerStage" class="text-xl sm:text-2xl font-extrabold text-white font-mono block">Stage IIA</span>
+              <span id="resTNMClassification" class="text-[10px] font-mono text-slate-400 block">cT2 N0 M0</span>
+            </div>
+            <!-- Problem 6: Why calculated tab -->
+            <div class="mt-2 pt-1 border-t border-[#2c3036]/60 has-tooltip relative inline-block">
+              <button type="button" class="why-metric-trigger">
+                Why is this calculated? <span class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</span>
+              </button>
+              <div class="human-tooltip absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 w-64 p-2.5 rounded-xl text-xs text-left">
+                <strong class="text-blue-400 block mb-0.5">Clinical Purpose:</strong>
+                Cancer staging measures tumor size and spread. Doctors use this exact stage to decide whether immediate surgery or chemotherapy is required first.
+              </div>
+            </div>
+          </div>
+
+          <!-- Metric 2: Diagnostic Certainty -->
+          <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036] text-center flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 block mb-0.5">Diagnostic Certainty</span>
+              <span id="resConfidence" class="text-xl sm:text-2xl font-extrabold text-blue-400 font-mono block">95.8%</span>
+              <span class="text-[10px] text-slate-400 block">High Certainty</span>
+            </div>
+            <!-- Problem 6: Why calculated tab -->
+            <div class="mt-2 pt-1 border-t border-[#2c3036]/60 has-tooltip relative inline-block">
+              <button type="button" class="why-metric-trigger">
+                Why is this calculated? <span class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</span>
+              </button>
+              <div class="human-tooltip absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 w-64 p-2.5 rounded-xl text-xs text-left">
+                <strong class="text-blue-400 block mb-0.5">Clinical Purpose:</strong>
+                Calculates how closely this patient's cell features match confirmed biopsy patterns. Above 90% indicates strong multimodal agreement across image and text.
+              </div>
+            </div>
+          </div>
+
+          <!-- Metric 3: 5-Yr Survival -->
+          <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036] text-center flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 block mb-0.5">5-Yr Survival</span>
+              <span id="resSurvival" class="text-xl sm:text-2xl font-extrabold text-emerald-400 font-mono block">93%</span>
+              <span class="text-[10px] text-slate-400 block">Prognostic Model</span>
+            </div>
+            <!-- Problem 6: Why calculated tab -->
+            <div class="mt-2 pt-1 border-t border-[#2c3036]/60 has-tooltip relative inline-block">
+              <button type="button" class="why-metric-trigger">
+                Why is this calculated? <span class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</span>
+              </button>
+              <div class="human-tooltip absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 w-64 p-2.5 rounded-xl text-xs text-left">
+                <strong class="text-blue-400 block mb-0.5">Clinical Purpose:</strong>
+                Estimated through longitudinal survival modeling based on tumor histology and biomarker levels. It empowers patients and oncologists to assess cure likelihood.
+              </div>
+            </div>
+          </div>
+
+          <!-- Metric 4: Doctors' Board -->
+          <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036] text-center flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 block mb-0.5">Doctors' Board</span>
+              <span id="mdtConcordanceHeader" class="text-xl sm:text-2xl font-extrabold text-purple-400 font-mono block">97.4%</span>
+              <span class="text-[10px] text-slate-400 block">Unanimous</span>
+            </div>
+            <!-- Problem 6: Why calculated tab -->
+            <div class="mt-2 pt-1 border-t border-[#2c3036]/60 has-tooltip relative inline-block">
+              <button type="button" class="why-metric-trigger">
+                Why is this calculated? <span class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</span>
+              </button>
+              <div class="human-tooltip absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 w-64 p-2.5 rounded-xl text-xs text-left">
+                <strong class="text-blue-400 block mb-0.5">Clinical Purpose:</strong>
+                Simulates multidisciplinary tumor board consensus across surgical, medical, radiation, and genomic specialists to ensure cross-specialty agreement before treatment.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Plain English Clinical Narrative with Audience Switcher -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-[#111315] border border-[#2c3036] space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Clinical Narrative</span>
+            <span class="has-tooltip relative inline-flex items-center">
+              <button type="button" class="info-btn" aria-label="Description">i</button>
+              <span class="human-tooltip absolute bottom-full mb-2 left-0 w-64 p-2.5 rounded-xl text-xs">
+                Toggle between simple patient-friendly explanation and technical oncology documentation.
+              </span>
+            </span>
+          </div>
+
+          <!-- Audience Toggle -->
+          <div class="inline-flex p-1 rounded-xl bg-[#181a1d] border border-[#2c3036] text-xs">
+            <button id="viewPatientSummaryBtn" type="button" class="px-3 py-1 rounded-lg font-semibold transition-colors bg-blue-600 text-white shadow-sm cursor-pointer">
+              Patient View
+            </button>
+            <button id="viewTechnicalSummaryBtn" type="button" class="px-3 py-1 rounded-lg font-semibold transition-colors text-slate-400 hover:text-white cursor-pointer">
+              Doctor View
+            </button>
+          </div>
+        </div>
+
+        <p id="resPlainSummary" class="text-sm text-slate-200 leading-relaxed font-normal">
+          The algorithmic analysis identified findings consistent with breast cancer (Stage IIA). Nuclear pleomorphism and elevated CA-125 markers support this. Recommended treatment options include partial mastectomy and targeted adjuvant therapy.
+        </p>
+      </div>
+
+      <!-- Live Cross-Attention Weights (Calculated Value) -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-300 flex items-center gap-1.5">
+            <span>Calculated Modality Influence Weights</span>
+            <span class="has-tooltip relative inline-flex items-center">
+              <button type="button" class="info-btn" aria-label="Description">i</button>
+              <span class="human-tooltip absolute bottom-full mb-2 left-0 w-64 p-2.5 rounded-xl text-xs">
+                Shows how much the diagnostic algorithm relied on the biopsy image versus doctor notes versus blood biomarkers.
+              </span>
+            </span>
+          </span>
+          <span class="font-mono text-slate-500 text-[11px]" id="fusionWeightNote">Dynamically weighted across active inputs</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-[#111315] p-3 rounded-xl border border-[#2c3036]">
+            <div class="text-[11px] text-slate-400">Microscope Image</div>
+            <div id="imgWeightText" class="font-mono font-bold text-lg text-blue-400">45%</div>
+            <div class="w-full bg-[#202327] h-1.5 rounded-full overflow-hidden mt-1.5">
+              <div id="imgWeightBar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 45%;"></div>
+            </div>
+          </div>
+          <div class="bg-[#111315] p-3 rounded-xl border border-[#2c3036]">
+            <div class="text-[11px] text-slate-400">Pathology Text</div>
+            <div id="txtWeightText" class="font-mono font-bold text-lg text-purple-400">35%</div>
+            <div class="w-full bg-[#202327] h-1.5 rounded-full overflow-hidden mt-1.5">
+              <div id="txtWeightBar" class="bg-purple-500 h-full rounded-full transition-all duration-500" style="width: 35%;"></div>
+            </div>
+          </div>
+          <div class="bg-[#111315] p-3 rounded-xl border border-[#2c3036]">
+            <div class="text-[11px] text-slate-400">Blood Biomarkers</div>
+            <div id="tabWeightText" class="font-mono font-bold text-lg text-emerald-400">20%</div>
+            <div class="w-full bg-[#202327] h-1.5 rounded-full overflow-hidden mt-1.5">
+              <div id="tabWeightBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 20%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- HIGH PRIORITY SECTION 2: INTERACTIVE "WHAT-IF" SIMULATOR       -->
+    <!-- ============================================================== -->
+    <div class="glass-panel p-6 sm:p-8 space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#2c3036] pb-3 gap-2">
+        <div class="flex items-center gap-2">
+          <h3 class="text-lg font-bold text-white tracking-tight">
+            Interactive What-If Simulation Sandbox
+          </h3>
+          <span class="has-tooltip relative inline-flex items-center">
+            <button type="button" class="info-btn" aria-label="Description">i</button>
+            <span class="human-tooltip absolute bottom-full mb-2 left-0 sm:left-1/2 sm:-translate-x-1/2 w-80 p-3 rounded-xl text-xs z-50">
+              <strong class="text-blue-400 block mb-1">What you can test here:</strong>
+              Slide the biomarker values (CA-125 and CEA) up or down. Observe in real-time how lowering tumor markers shifts patient survival and stages towards complete remission.
+            </span>
           </span>
         </div>
 
-        <!-- Section 1: Histopathology Slide Image Upload Dropzone (fade-in-field) -->
-        <div class="fade-in-field space-y-2">
-          <div class="flex items-center justify-between">
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-              Histopathology WSI Slide Image (Vision Ingestion)
-            </label>
-            <div class="flex items-center gap-2">
-              <button type="button" id="loadSampleSlideBtn" class="text-xs text-blue-400 hover:text-blue-300 underline cursor-pointer">
-                Load Sample Tile
-              </button>
-              <span class="text-[11px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">ResNet-50</span>
-            </div>
-          </div>
-          
-          <div id="dropZone" class="border-2 border-dashed border-slate-800 hover:border-slate-600 bg-slate-900/50 hover:bg-slate-900/80 rounded-xl p-6 text-center cursor-pointer transition-all duration-200">
-            <input type="file" id="imageInput" accept="image/*" class="hidden">
-            <div class="flex flex-col items-center gap-2.5">
-              <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-              </svg>
-              <div>
-                <p id="dropZoneText" class="text-sm font-medium text-slate-300">
-                  Drop slide image here or <span class="text-blue-400 underline font-medium">browse file</span>
-                </p>
-                <p class="text-xs text-slate-500 mt-1">Supports PNG, JPG, JPEG slide scans (224×224)</p>
-              </div>
-              <img id="imagePreview" src="" alt="Preview" class="hidden w-32 h-32 object-cover rounded-lg border border-slate-700 shadow-sm mt-2">
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 2: BioBERT Clinical Pathology Report Textarea (fade-in-field) -->
-        <div class="fade-in-field space-y-2">
-          <div class="flex items-center justify-between">
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-              Clinical Pathology Narrative Report (NLP Transformer Input)
-            </label>
-            <span class="text-[11px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">BioBERT NLP</span>
-          </div>
-          <textarea id="reportTextInput" rows="4" class="w-full bg-slate-900 border border-slate-800 text-slate-200 text-xs rounded-lg p-3.5 focus:outline-none focus:border-blue-500 font-mono leading-relaxed transition-colors resize-none placeholder:text-slate-600" placeholder="Paste surgical pathology report, biopsy narrative, or clinical notes (e.g. 'Core needle biopsy reveals invasive ductal carcinoma with nuclear pleomorphism, ER/PR negative, HER2 positive...')..."></textarea>
-          <div class="flex items-center justify-between text-[11px] text-slate-500">
-            <span>HIPAA Safe-Harbor De-Identification Active</span>
-            <span id="charCount" class="font-mono">0 characters</span>
-          </div>
-        </div>
-
-        <!-- Section 3: Patient Vitals & Clinical Biomarkers (fade-in-field) -->
-        <div class="fade-in-field space-y-2.5">
-          <div class="flex items-center justify-between">
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-              Patient Vitals &amp; Clinical Biomarkers (Tabular Features)
-            </label>
-            <span class="text-[11px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">Tabular MLP</span>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="bg-slate-900/70 p-3 rounded-lg border border-slate-800">
-              <label class="text-xs text-slate-400 block mb-1 font-medium">CA-125 (U/mL)</label>
-              <input type="number" step="0.1" id="ca125Input" value="" placeholder="e.g. 48.5" class="w-full bg-slate-950 border border-slate-800 text-slate-200 font-mono font-semibold text-sm rounded-md p-2 focus:outline-none focus:border-blue-500">
-              <span class="text-[10px] text-slate-500 mt-1 block">Normal: &lt; 35.0 U/mL</span>
-            </div>
-            <div class="bg-slate-900/70 p-3 rounded-lg border border-slate-800">
-              <label class="text-xs text-slate-400 block mb-1 font-medium">CEA (ng/mL)</label>
-              <input type="number" step="0.1" id="ceaInput" value="" placeholder="e.g. 12.4" class="w-full bg-slate-950 border border-slate-800 text-slate-200 font-mono font-semibold text-sm rounded-md p-2 focus:outline-none focus:border-blue-500">
-              <span class="text-[10px] text-slate-500 mt-1 block">Normal: &lt; 3.0 ng/mL</span>
-            </div>
-            <div class="bg-slate-900/70 p-3 rounded-lg border border-slate-800">
-              <label class="text-xs text-slate-400 block mb-1 font-medium">Patient Age (Years)</label>
-              <input type="number" id="ageInput" value="" placeholder="e.g. 58" class="w-full bg-slate-950 border border-slate-800 text-slate-200 font-mono font-semibold text-sm rounded-md p-2 focus:outline-none focus:border-blue-500">
-              <span class="text-[10px] text-slate-500 mt-1 block">Cohort Prior</span>
-            </div>
-            <div class="bg-slate-900/70 p-3 rounded-lg border border-slate-800">
-              <label class="text-xs text-slate-400 block mb-1 font-medium">Systolic BP (mmHg)</label>
-              <input type="number" id="bpInput" value="" placeholder="e.g. 135" class="w-full bg-slate-950 border border-slate-800 text-slate-200 font-mono font-semibold text-sm rounded-md p-2 focus:outline-none focus:border-blue-500">
-              <span class="text-[10px] text-slate-500 mt-1 block">Normal: 90-120 mmHg</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 4: Live Modality Detection & Animated Progress Bar (fade-in-field) -->
-        <div class="fade-in-field p-4 sm:p-5 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3.5">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block">
-                Input Modality Ingestion Status
-              </span>
-              <p class="text-xs text-slate-300 font-medium mt-0.5">
-                <span id="modalityCountText">0 of 3 modalities provided</span>
-              </p>
-            </div>
-            <div class="flex items-center gap-2">
-              <span id="completenessBadge" class="text-xs font-mono font-medium px-2.5 py-1 rounded bg-slate-950 text-slate-400 border border-slate-800">
-                Awaiting Clinical Data
-              </span>
-              <span id="modalityPercentText" class="text-xs font-mono font-bold text-white min-w-[2.5rem] text-right">
-                0%
-              </span>
-            </div>
-          </div>
-
-          <!-- Animated Progress Bar -->
-          <div class="progress-track w-full h-2.5 bg-slate-950 border border-slate-800 rounded-full overflow-hidden">
-            <div id="modalityProgressBar" class="progress-fill h-full bg-blue-600 rounded-full transition-all duration-500 ease-out" style="width: 0%;"></div>
-          </div>
-
-          <!-- Modality Status Cards -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-            <div id="statusModImage" class="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-400 flex items-center justify-between transition-colors">
-              <span class="text-slate-300 font-medium">Slide Image:</span>
-              <span class="font-mono text-xs text-slate-500">None Provided</span>
-            </div>
-            <div id="statusModText" class="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-400 flex items-center justify-between transition-colors">
-              <span class="text-slate-300 font-medium">Pathology Notes:</span>
-              <span class="font-mono text-xs text-slate-500">None Provided</span>
-            </div>
-            <div id="statusModVitals" class="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-400 flex items-center justify-between transition-colors">
-              <span class="text-slate-300 font-medium">Biomarkers:</span>
-              <span class="font-mono text-xs text-slate-500">None Provided</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 5: Primary Action Submit Button (fade-in-field) -->
-        <div class="fade-in-field pt-2">
-          <button type="submit" id="runInferenceBtn" class="w-full py-3.5 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 text-sm tracking-normal cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            Execute Multi-Task Inference &amp; Generate Diagnostic Report →
+        <!-- Quick Scenarios -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs">
+          <button type="button" class="sim-scenario-btn px-2.5 py-1 rounded-lg bg-[#111315] border border-[#2c3036] hover:border-emerald-500/50 text-slate-300 hover:text-emerald-300 font-medium transition-colors cursor-pointer" data-ca125="15.0" data-cea="1.5" data-desc="Complete Biochemical Normalization">
+            Remission (15 / 1.5)
           </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- PAGE 2: MULTIMODAL AI DIAGNOSTIC REPORT & XAI ANALYSIS -->
-    <div id="reportPage" class="hidden space-y-6 max-w-7xl mx-auto">
-
-      <!-- Action Bar (Back to Inputs & Export Buttons) -->
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 glass-panel p-4 border border-slate-800">
-        <button id="backToInputsBtn" type="button" class="w-full sm:w-auto px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 font-medium text-xs hover:bg-slate-800 transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
-          <span>←</span> Back to Case Parameters
-        </button>
-        
-        <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
-          <span>Report Generated:</span>
-          <span id="reportTimestamp" class="text-slate-200 font-semibold">Live Session</span>
-        </div>
-
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <button onclick="downloadFHIRReport()" type="button" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 font-medium text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
-            Export FHIR R4 (.json)
+          <button type="button" class="sim-scenario-btn px-2.5 py-1 rounded-lg bg-[#111315] border border-[#2c3036] hover:border-blue-500/50 text-slate-300 hover:text-blue-300 font-medium transition-colors cursor-pointer" data-ca125="32.0" data-cea="2.8" data-desc="Targeted Response Below Cutoff">
+            Targeted (32 / 2.8)
           </button>
-          <button onclick="downloadDiagnosticReport()" type="button" class="flex-1 sm:flex-initial px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
-            Download Report (.txt)
+          <button type="button" class="sim-scenario-btn px-2.5 py-1 rounded-lg bg-[#111315] border border-[#2c3036] hover:border-rose-500/50 text-slate-300 hover:text-rose-300 font-medium transition-colors cursor-pointer" data-ca125="135.0" data-cea="65.0" data-desc="Progression Surge">
+            Progression (135 / 65)
           </button>
-          <button onclick="window.print()" type="button" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 font-medium text-xs hover:bg-slate-800 transition-colors flex items-center justify-center gap-1 cursor-pointer">
-            Print PDF
+          <button type="button" id="resetSimulationBtn" class="px-2.5 py-1 rounded-lg bg-[#111315] border border-[#2c3036] text-slate-400 hover:text-white font-medium cursor-pointer">
+            Reset
           </button>
         </div>
       </div>
 
-      <!-- Diagnostic Primary Summary Card -->
-      <div class="glass-panel p-6 border border-slate-800 shadow-sm space-y-5">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <!-- Sliders Grid & Calculated Impact -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-2xl bg-[#111315] border border-[#2c3036]">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-semibold text-slate-300">CA-125 Tumor Antigen (U/mL)</span>
+            <span id="simCa125Label" class="font-mono font-bold text-sm text-blue-400">48.5 U/mL</span>
+          </div>
+          <input type="range" id="simCa125Slider" min="5" max="250" step="0.5" value="48.5" class="w-full accent-blue-500 cursor-pointer">
+          <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+            <span>5.0 (Optimal)</span>
+            <span class="text-blue-400 font-semibold">Normal Cutoff &lt; 35</span>
+            <span>250.0 (High Surge)</span>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-semibold text-slate-300">CEA Carcinoembryonic (ng/mL)</span>
+            <span id="simCeaLabel" class="font-mono font-bold text-sm text-blue-400">12.4 ng/mL</span>
+          </div>
+          <input type="range" id="simCeaSlider" min="0.5" max="100" step="0.5" value="12.4" class="w-full accent-blue-500 cursor-pointer">
+          <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+            <span>0.5 (Optimal)</span>
+            <span class="text-blue-400 font-semibold">Normal Cutoff &lt; 3.0</span>
+            <span>100.0 (Critical)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Calculated Output Stage -->
+      <div id="simResultStage" class="p-4 rounded-xl bg-[#111315] border border-[#2c3036] grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div class="space-y-1">
+          <span class="text-[10px] uppercase font-bold text-slate-500 block">Stage Shift</span>
+          <div id="simStageShiftText" class="font-bold text-white text-sm">Stage IIA → Stage IIA (Stable)</div>
+          <span id="simScenarioText" class="text-[11px] text-slate-400 block italic">Patient Baseline Values</span>
+        </div>
+
+        <div class="space-y-1">
+          <span class="text-[10px] uppercase font-bold text-slate-500 block">5-Year Survival Shift</span>
+          <div class="flex items-center gap-2">
+            <span id="simSurvivalVal" class="font-mono font-extrabold text-blue-400 text-lg">93%</span>
+            <span id="simSurvivalDeltaBadge" class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#181a1d] text-slate-300 border border-[#2c3036]">+0% Baseline</span>
+          </div>
+          <span class="text-[11px] text-slate-400 block">Calculated via Longitudinal Model</span>
+        </div>
+
+        <div class="space-y-1">
+          <span class="text-[10px] uppercase font-bold text-slate-500 block">Next Clinical Action</span>
+          <div id="simThresholdText" class="text-slate-300 leading-snug">Target CA-125 &lt; 35 U/mL &amp; CEA &lt; 3.0 ng/mL for complete remission shift.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- HIGH PRIORITY SECTION 3: VISUAL SCAN & HEATMAP PROOF           -->
+    <!-- ============================================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Microscope Visual Studio -->
+      <div class="glass-panel p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-[#2c3036] pb-3">
+          <div class="flex items-center gap-2">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-200">
+              Tissue Scan &amp; Heatmap
+            </h4>
+            <span class="has-tooltip relative inline-flex items-center">
+              <button type="button" class="info-btn" aria-label="Description">i</button>
+              <span class="human-tooltip absolute bottom-full mb-2 left-0 w-72 p-3 rounded-xl text-xs z-50">
+                <strong class="text-blue-400 block mb-1">Visual Heatmap Guide:</strong>
+                Highlights in color the specific cells under the microscope that triggered diagnostic classification. Click on any area to inspect cellular density.
+              </span>
+            </span>
+          </div>
+
+          <!-- Channel Tabs -->
+          <div class="flex items-center gap-1 p-1 rounded-xl bg-[#111315] border border-[#2c3036] text-xs font-semibold">
+            <button id="viewGradCamBtn" type="button" class="channel-tab-btn px-2.5 py-1 rounded-lg bg-blue-600 text-white cursor-pointer transition-colors">
+              Heatmap
+            </button>
+            <button id="viewMacenkoBtn" type="button" class="channel-tab-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer transition-colors">
+              Normalized
+            </button>
+            <button id="viewHematoxylinBtn" type="button" class="channel-tab-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer transition-colors">
+              Nuclei
+            </button>
+            <button id="viewRawTileBtn" type="button" class="channel-tab-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer transition-colors">
+              Raw
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="relative rounded-xl overflow-hidden border border-[#2c3036] bg-[#111315] aspect-video flex items-center justify-center cursor-crosshair" id="slideViewerStage">
+          <!-- Placeholder when no image is provided -->
+          <div id="slideOmittedPlaceholder" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-[#111315]/95 backdrop-blur-sm z-20 space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-xl font-bold">
+              🔬
+            </div>
+            <div class="space-y-1">
+              <h5 class="text-sm font-bold text-white">Histopathology Slide Omitted</h5>
+              <p class="text-xs text-slate-400 max-w-sm">No H&amp;E tissue slide was uploaded. Visual channels (Grad-CAM heatmap, Macenko normalization, and spatial coordinates) are inactive for this diagnostic run.</p>
+            </div>
+            <button type="button" id="placeholderAttachSlideBtn" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer shadow-sm transition-colors flex items-center gap-1.5">
+              <span>+</span> Attach Slide Tile in Custom Input
+            </button>
+          </div>
+
+          <img id="visualStudioImg" src="" alt="Histopathology Channel" class="w-full h-full object-contain">
+          
+          <div id="gradCamOverlayBadge" class="absolute bottom-3 left-3 right-3 px-3 py-2 rounded-xl bg-[#181a1d]/90 backdrop-blur-md text-xs font-mono flex items-center justify-between border border-[#3d434b] text-slate-100 pointer-events-none">
+            <span id="gradCamOverlayText" class="font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+              <span>Peak Activation (310, 190): 0.942</span>
+            </span>
+            <span class="text-blue-300 font-bold px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30">
+              ResNet-50 L4.2
+            </span>
+          </div>
+        </div>
+
+        <!-- Coordinates HUD -->
+        <div class="grid grid-cols-4 gap-2 text-center p-2.5 rounded-xl bg-[#111315] border border-[#2c3036] text-xs">
           <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Multi-Task Head: Malignancy &amp; Subtype</span>
-              <span id="resSubtype" class="text-xs font-mono text-slate-300 px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Invasive Ductal Carcinoma</span>
-            </div>
-            <h3 id="resCancerType" class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-              Breast Cancer
-            </h3>
+            <span class="text-[10px] text-slate-500 block">Coordinates</span>
+            <span id="hudCoords" class="font-mono font-bold text-slate-200">(310, 190)</span>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <span id="resCancerStage" class="px-3 py-1 rounded-md text-xs font-semibold bg-slate-900 text-slate-200 border border-slate-800 font-mono">
-              Stage IIA
-            </span>
-            <span id="resTNMClassification" class="px-3 py-1 rounded-md text-xs font-mono font-semibold bg-slate-900 text-slate-300 border border-slate-800">
-              TNM: cT2 N0 M0
-            </span>
-            <span id="resConfidence" class="px-3 py-1 rounded-md text-xs font-mono font-semibold bg-slate-900 text-slate-200 border border-slate-800">
-              Confidence: 95.8%
-            </span>
-            <span id="resSurvival" class="px-3 py-1 rounded-md text-xs font-mono font-semibold bg-blue-600/20 text-blue-300 border border-blue-600/40">
-              5-Yr Survival: 93%
-            </span>
+          <div>
+            <span class="text-[10px] text-slate-500 block">Activation</span>
+            <span id="hudActivation" class="font-mono font-bold text-blue-400">94.2%</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-500 block">Cell Class</span>
+            <span id="hudTissueClass" class="text-slate-200 font-medium truncate block">Tumor Core</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-500 block">Density</span>
+            <span id="hudDensity" class="text-slate-200 font-medium truncate block">840 cells/mm²</span>
           </div>
         </div>
 
-        <!-- Dual-Audience Summary Switcher (Patient vs Tumor Board) -->
-        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-3">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Clinical Rationale &amp; Interpretation
-            </div>
-            <!-- Audience Toggle Switch -->
-            <div class="inline-flex p-1 rounded-lg bg-slate-950 border border-slate-800">
-              <button id="viewPatientSummaryBtn" type="button" class="px-3 py-1 rounded-md text-xs font-medium transition-colors bg-white dark:bg-slate-800 text-slate-900 dark:text-white cursor-pointer shadow-xs">
-                Patient &amp; Family View
-              </button>
-              <button id="viewTechnicalSummaryBtn" type="button" class="px-3 py-1 rounded-md text-xs font-medium transition-colors text-slate-400 hover:text-white cursor-pointer">
-                Tumor Board Technical View
-              </button>
-            </div>
+        <!-- Problem 6: Why is heatmap calculated link -->
+        <div class="has-tooltip relative inline-block">
+          <button type="button" class="why-metric-trigger">
+            Why is tissue activation calculated? <span class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</span>
+          </button>
+          <div class="human-tooltip absolute bottom-full mb-1 left-0 w-72 p-2.5 rounded-xl text-xs text-left">
+            <strong class="text-blue-400 block mb-0.5">Microscope Transparency:</strong>
+            Standard pathology reviews millions of cells. The heatmap ensures the clinician can instantly verify that the prediction is focusing on malignant cell clusters rather than slide artifacts.
           </div>
-          <p id="resPlainSummary" class="text-sm text-slate-300 leading-relaxed">
-            The multimodal model detected key features indicative of primary malignancy.
-          </p>
         </div>
+      </div>
 
-        <!-- Data Completeness & Detected Modalities Bar -->
-        <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/80">
-          <div class="flex items-center justify-between mb-3">
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Analyzed Modalities &amp; Completeness
-            </div>
-            <span id="resDataQualityBadge" class="text-xs font-mono font-medium px-2.5 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800">
-              High Quality (3/3 Complete)
+      <!-- SHAP Key Factors -->
+      <div class="glass-panel p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-[#2c3036] pb-3">
+          <div class="flex items-center gap-2">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-200">
+              Key Contributing Factors (SHAP)
+            </h4>
+            <span class="has-tooltip relative inline-flex items-center">
+              <button type="button" class="info-btn" aria-label="Description">i</button>
+              <span class="human-tooltip absolute bottom-full mb-2 left-0 w-72 p-3 rounded-xl text-xs z-50">
+                <strong class="text-blue-400 block mb-1">Feature Attribution:</strong>
+                Mathematical ranking showing which exact clinical note, receptor status, or biomarker value pushed the diagnostic conclusion most.
+              </span>
             </span>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-            <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
-              <span class="text-slate-400 font-medium flex items-center justify-between">
-                <span>Slide Image:</span>
-                <span id="badgeImgActive" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Provided</span>
-              </span>
-              <span id="sumImgText" class="text-slate-200 font-mono block truncate">slide_tile.jpg</span>
-            </div>
-            <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
-              <span class="text-slate-400 font-medium flex items-center justify-between">
-                <span>Biopsy Narrative:</span>
-                <span id="badgeTextActive" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Provided</span>
-              </span>
-              <span id="sumReportText" class="text-slate-200 font-mono block truncate">Invasive ductal carcinoma histology...</span>
-            </div>
-            <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
-              <span class="text-slate-400 font-medium flex items-center justify-between">
-                <span>Biomarkers &amp; Vitals:</span>
-                <span id="badgeVitalsActive" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Provided</span>
-              </span>
-              <span id="sumVitalsText" class="text-slate-200 font-mono block truncate">CA-125: 48.5 | CEA: 12.4</span>
-            </div>
-          </div>
+          <span class="text-xs font-mono text-slate-400 px-2 py-0.5 rounded bg-[#111315] border border-[#2c3036]">
+            Base Risk = 50%
+          </span>
         </div>
 
-        <!-- Evidence Breakdown Cards -->
-        <div>
-          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-            Diagnostic Evidence Identified Across Modalities
+        <div id="shapWaterfallContainer" class="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Problem 6: Why SHAP is calculated link -->
+        <div class="has-tooltip relative inline-block">
+          <button type="button" class="why-metric-trigger">
+            Why is SHAP attribution calculated? <span class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</span>
+          </button>
+          <div class="human-tooltip absolute bottom-full mb-1 left-0 w-72 p-2.5 rounded-xl text-xs text-left">
+            <strong class="text-blue-400 block mb-0.5">Explaining the Diagnosis:</strong>
+            Doctors need to know *why* a particular finding was reached. SHAP shows the exact weight of each patient factor (e.g. receptor positivity vs tumor markers) so doctors can trust and verify the result.
           </div>
-          <div id="evidenceBreakdownContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- HIGH PRIORITY SECTION 4: DOCTORS' BOARD & TREATMENT PLAN       -->
+    <!-- ============================================================== -->
+    <div class="glass-panel p-6 sm:p-8 space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#2c3036] pb-3 gap-2">
+        <div class="flex items-center gap-2">
+          <h3 class="text-lg font-bold text-white tracking-tight">
+            Virtual Tumor Board (MDT Consensus)
+          </h3>
+          <span class="has-tooltip relative inline-flex items-center">
+            <button type="button" class="info-btn" aria-label="Description">i</button>
+            <span class="human-tooltip absolute bottom-full mb-2 left-0 sm:left-1/2 sm:-translate-x-1/2 w-80 p-3 rounded-xl text-xs z-50">
+              <strong class="text-blue-400 block mb-1">Virtual Tumor Board:</strong>
+              Consensus protocols across 4 oncology specialists (Surgical, Medical, Radiation, and Genetics) formulating a unified treatment recommendation.
+            </span>
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span id="mdtRatificationStatusBadge" class="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-purple-500/10 text-purple-300 border border-purple-500/20">
+            Pending Ratification
+          </span>
+        </div>
+      </div>
+
+      <!-- 4 Specialists Grid -->
+      <div id="mdtSpecialistsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- Dynamically populated -->
+      </div>
+
+      <!-- Deliberations & Action Plan -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-4 rounded-xl bg-[#111315] border border-[#2c3036] space-y-2">
+          <span class="font-bold text-slate-200 block">Board Deliberations</span>
+          <ul id="mdtDeliberationList" class="list-disc list-inside space-y-1 text-slate-400 font-normal">
             <!-- Dynamically populated -->
-          </div>
+          </ul>
         </div>
-
-        <!-- Dynamic Gated Cross-Attention Fusion Weights -->
-        <div>
-          <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-            <span class="font-semibold uppercase tracking-wider">Dynamic Cross-Attention Modality Weights</span>
-            <span class="font-mono text-[11px]" id="fusionWeightNote">Weights dynamically sum to 100% across active inputs</span>
-          </div>
-          <div class="grid grid-cols-3 gap-3 text-center">
-            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-              <div class="text-[10px] text-slate-400 mb-1">Imaging (ResNet-50 Layer 4.2)</div>
-              <div id="imgWeightText" class="font-mono font-bold text-slate-200 text-sm">45%</div>
-              <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
-                <div id="imgWeightBar" class="bg-blue-600 h-full rounded-full transition-all duration-500" style="width: 45%;"></div>
-              </div>
-            </div>
-            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-              <div class="text-[10px] text-slate-400 mb-1">Text (BioBERT NLP)</div>
-              <div id="txtWeightText" class="font-mono font-bold text-slate-200 text-sm">35%</div>
-              <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
-                <div id="txtWeightBar" class="bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: 35%;"></div>
-              </div>
-            </div>
-            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-              <div class="text-[10px] text-slate-400 mb-1">Tabular Vitals &amp; SHAP</div>
-              <div id="tabWeightText" class="font-mono font-bold text-slate-200 text-sm">20%</div>
-              <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
-                <div id="tabWeightBar" class="bg-slate-400 h-full rounded-full transition-all duration-500" style="width: 20%;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Missing Modality Recommendations -->
-        <div id="missingRecommendationsBox" class="hidden bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl text-xs text-amber-300">
-          <div class="font-semibold flex items-center gap-2 mb-1">
-            <span>Recommended Additional Diagnostic Tests</span>
-          </div>
-          <ul id="missingRecommendationsList" class="list-disc list-inside space-y-1 text-slate-300 font-normal">
+        <div class="p-4 rounded-xl bg-[#111315] border border-[#2c3036] space-y-2">
+          <span class="font-bold text-emerald-400 block">Ratified Action Plan</span>
+          <ul id="mdtActionPlanList" class="list-decimal list-inside space-y-1 text-slate-300 font-normal">
             <!-- Dynamically populated -->
           </ul>
         </div>
       </div>
 
-      <!-- INTERACTIVE "WHAT-IF" COUNTERFACTUAL SIMULATION SANDBOX -->
-      <div class="glass-panel p-6 border border-slate-800 shadow-sm space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
-              Counterfactual Inference
-            </div>
-            <h4 class="text-base font-bold text-white tracking-tight">
-              Interactive "What-If" Counterfactual Biomarker Simulator
-            </h4>
-            <p class="text-xs text-slate-400">Simulate hypothetical post-surgical or targeted treatment responses in real time.</p>
-          </div>
-          <span class="text-xs font-mono text-slate-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-800">
-            Real-Time Perturbation
+      <!-- Signoff button & Why link -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-xl bg-[#111315] border border-[#2c3036]">
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-slate-400">
+            EHR Audit Trail: <span id="mdtBoardIdBadge" class="font-mono text-slate-200 font-semibold">MDT-948201</span>
           </span>
-        </div>
-
-        <!-- Simulation Quick-Select Scenarios -->
-        <div class="flex flex-wrap items-center gap-2 text-xs">
-          <span class="font-semibold text-slate-400 uppercase tracking-wider text-[11px] mr-1">Pre-Set Scenarios:</span>
-          <button type="button" class="sim-scenario-btn px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 hover:border-slate-600 text-slate-300 hover:text-white transition-colors cursor-pointer" data-ca125="15.0" data-cea="1.5" data-desc="Complete Biochemical Normalization / Post-Surgical Resection">
-            Near-Complete Remission (CA125: 15.0 | CEA: 1.5)
-          </button>
-          <button type="button" class="sim-scenario-btn px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 hover:border-slate-600 text-slate-300 hover:text-white transition-colors cursor-pointer" data-ca125="32.0" data-cea="2.8" data-desc="Targeted Therapy Partial Response / Below Cutoff">
-            Targeted Response (CA125: 32.0 | CEA: 2.8)
-          </button>
-          <button type="button" class="sim-scenario-btn px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 hover:border-slate-600 text-slate-300 hover:text-white transition-colors cursor-pointer" data-ca125="135.0" data-cea="65.0" data-desc="Biochemical Progression Surge / Recurrence Warning">
-            Progression Surge (CA125: 135.0 | CEA: 65.0)
-          </button>
-          <button type="button" id="resetSimulationBtn" class="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer">
-            Reset to Baseline
-          </button>
-        </div>
-
-        <!-- Interactive Sliders Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-          <div>
-            <div class="flex items-center justify-between text-xs mb-2">
-              <span class="font-medium text-slate-300">Simulate CA-125 Level (U/mL):</span>
-              <span id="simCa125Label" class="font-mono font-bold text-slate-100 text-sm">48.5 U/mL</span>
-            </div>
-            <input type="range" id="simCa125Slider" min="5" max="250" step="0.5" value="48.5" class="w-full accent-blue-600 cursor-pointer">
-            <div class="flex items-center justify-between text-[10px] text-slate-500 mt-1 font-mono">
-              <span>5.0 (Optimal)</span>
-              <span class="text-slate-400">Cutoff: 35.0 U/mL</span>
-              <span>250.0 (High Surge)</span>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex items-center justify-between text-xs mb-2">
-              <span class="font-medium text-slate-300">Simulate CEA Level (ng/mL):</span>
-              <span id="simCeaLabel" class="font-mono font-bold text-slate-100 text-sm">12.4 ng/mL</span>
-            </div>
-            <input type="range" id="simCeaSlider" min="0.5" max="100" step="0.5" value="12.4" class="w-full accent-blue-600 cursor-pointer">
-            <div class="flex items-center justify-between text-[10px] text-slate-500 mt-1 font-mono">
-              <span>0.5 (Optimal)</span>
-              <span class="text-slate-400">Cutoff: 3.0 ng/mL</span>
-              <span>100.0 (Critical Surge)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Simulation Result Live Comparison Stage -->
-        <div id="simResultStage" class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div class="space-y-1 border-r border-slate-800 pr-3">
-            <span class="text-slate-500 font-semibold block uppercase tracking-wider text-[10px]">Staging Trajectory</span>
-            <div id="simStageShiftText" class="font-semibold text-white text-sm">Stage IIA → Stage IIA (Stable)</div>
-            <span id="simScenarioText" class="text-[11px] text-slate-400 block italic">Patient Baseline Values</span>
-          </div>
-
-          <div class="space-y-1 border-r border-slate-800 pr-3">
-            <span class="text-slate-500 font-semibold block uppercase tracking-wider text-[10px]">5-Year Survival Shift</span>
-            <div class="flex items-center gap-2">
-              <span id="simSurvivalVal" class="font-mono font-bold text-blue-400 text-base">93%</span>
-              <span id="simSurvivalDeltaBadge" class="font-mono text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400">+0% Baseline</span>
-            </div>
-            <span class="text-[11px] text-slate-400 block">Longitudinal Cox Model Projection</span>
-          </div>
-
-          <div class="space-y-1">
-            <span class="text-slate-500 font-semibold block uppercase tracking-wider text-[10px]">Remission Target Threshold</span>
-            <div id="simThresholdText" class="text-slate-300 text-xs leading-snug">Target CA-125 &lt; 35 U/mL &amp; CEA &lt; 3.0 ng/mL for complete remission shift.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- INTERPRETABILITY SUITE GRID: Visual Studio & SHAP Waterfall -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- Interactive Histopathology Visual Studio -->
-        <div class="glass-panel p-6 space-y-4 border border-slate-800">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
-            <div>
-              <h4 class="text-sm font-bold uppercase tracking-wider text-slate-200">
-                Visual Interpretability Studio
-              </h4>
-              <p class="text-[11px] text-slate-400">ResNet-50 Layer 4.2 Grad-CAM &amp; Macenko Normalization</p>
-            </div>
-            <span class="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              Layer 4.2 Conv
-            </span>
-          </div>
-
-          <!-- Channel Switcher Tabs -->
-          <div class="flex flex-wrap items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs">
-            <button id="viewGradCamBtn" type="button" class="channel-tab-btn flex-1 py-1.5 px-2 rounded-md font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-colors">
-              Grad-CAM
+          <!-- Problem 6: Why MDT is calculated -->
+          <div class="has-tooltip relative inline-block">
+            <button type="button" class="why-metric-trigger">
+              Why is MDT consensus calculated? <span class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</span>
             </button>
-            <button id="viewMacenkoBtn" type="button" class="channel-tab-btn flex-1 py-1.5 px-2 rounded-md font-medium text-slate-400 hover:text-white transition-colors">
-              Macenko
-            </button>
-            <button id="viewHematoxylinBtn" type="button" class="channel-tab-btn flex-1 py-1.5 px-2 rounded-md font-medium text-slate-400 hover:text-white transition-colors">
-              Hematoxylin
-            </button>
-            <button id="viewRawTileBtn" type="button" class="channel-tab-btn flex-1 py-1.5 px-2 rounded-md font-medium text-slate-400 hover:text-white transition-colors">
-              Raw Slide
-            </button>
-          </div>
-
-          <!-- Image Display Stage with Click-to-Inspect Coordinates -->
-          <div class="relative rounded-lg overflow-hidden border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center cursor-crosshair group" id="slideViewerStage">
-            <img id="visualStudioImg" src="" alt="Histopathology Channel" class="w-full h-full object-contain">
-            
-            <div id="gradCamOverlayBadge" class="absolute bottom-3 left-3 right-3 px-3 py-2 rounded-lg bg-slate-950/90 backdrop-blur-md text-xs font-mono flex items-center justify-between border border-slate-800 shadow-sm text-slate-100 pointer-events-none">
-              <span id="gradCamOverlayText" class="font-medium flex items-center gap-2">
-                <span id="gradCamDot" class="w-2 h-2 rounded-full bg-blue-500"></span>
-                <span>Peak Activation (310, 190): 0.942</span>
-              </span>
-              <span id="gradCamModelBadge" class="text-slate-300 font-semibold px-2 py-0.5 rounded bg-slate-900 border border-slate-700">
-                ResNet-50 Layer 4.2
-              </span>
-            </div>
-          </div>
-
-          <!-- Microenvironment Coordinate Inspector HUD -->
-          <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-xs space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-semibold uppercase tracking-wider text-[11px] text-slate-300">
-                Spatial Microenvironment Inspector
-              </span>
-              <span class="text-[10px] text-slate-500 italic">Click image above to inspect local coordinates</span>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-              <div>
-                <span class="text-slate-500 block">Coordinates:</span>
-                <span id="hudCoords" class="font-mono text-slate-200">(310, 190)</span>
-              </div>
-              <div>
-                <span class="text-slate-500 block">Activation:</span>
-                <span id="hudActivation" class="font-mono font-bold text-blue-400">0.942 (94%)</span>
-              </div>
-              <div>
-                <span class="text-slate-500 block">Classification:</span>
-                <span id="hudTissueClass" class="text-slate-200">Tumor Core Epithelium</span>
-              </div>
-              <div>
-                <span class="text-slate-500 block">Cell Density:</span>
-                <span id="hudDensity" class="text-slate-200">High (840 cells/mm²)</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Visual Controls: Opacity & Focal Coordinates -->
-          <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
-            <div class="flex items-center gap-2 w-1/2">
-              <span class="text-[11px] font-medium">Heatmap Opacity:</span>
-              <input type="range" id="opacitySlider" min="10" max="100" value="95" class="w-24 accent-blue-600 cursor-pointer">
-              <span id="opacityVal" class="font-mono text-[11px]">95%</span>
-            </div>
-            <div class="text-[11px] font-mono text-slate-400 text-right">
-              224×224×3 RGB
+            <div class="human-tooltip absolute bottom-full mb-1.5 left-0 w-72 p-2.5 rounded-xl text-xs text-left">
+              <strong class="text-blue-400 block mb-0.5">Clinical Consensus:</strong>
+              Modern oncology requires input from surgeons, medical oncologists, and radiologists. Synthesizing consensus prevents conflicting treatments and aligns therapy sequences.
             </div>
           </div>
         </div>
 
-        <!-- SHAP Game-Theoretic Waterfall Attribution Panel -->
-        <div class="glass-panel p-6 space-y-4 border border-slate-800">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div>
-              <h4 class="text-sm font-bold uppercase tracking-wider text-slate-200">
-                SHAP Game-Theoretic Waterfall
-              </h4>
-              <p class="text-[11px] text-slate-400">Feature contributions pushing from Base E[f(X)] to Final Decision</p>
-            </div>
-            <span class="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              E[f(X)] = 0.50
-            </span>
-          </div>
-
-          <!-- Waterfall Step List -->
-          <div id="shapWaterfallContainer" class="space-y-2.5 min-h-[260px]">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-
+        <button id="ratifyMDTBtn" type="button" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors cursor-pointer flex items-center gap-1.5">
+          <span>✓</span> Ratify Consensus Protocol
+        </button>
       </div>
+    </div>
 
-      <!-- BIOBERT NLP TOKEN ATTENTION & PHI SCRUBBER -->
-      <div class="glass-panel p-6 space-y-4 border border-slate-800">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
-          <div>
-            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-200">
-              BioBERT NLP Token Attention &amp; Clinical Entity Extraction
-            </h4>
-            <p class="text-[11px] text-slate-400">Entity categorization from surgical narrative embeddings</p>
-          </div>
-          <div class="flex items-center gap-2 text-xs">
-            <span id="phiStatusBadge" class="px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800 font-mono text-[11px]">
-              HIPAA Safe-Harbor De-Identified
-            </span>
-          </div>
-        </div>
-
-        <!-- Entity Category Legend -->
-        <div class="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-          <span class="font-semibold uppercase tracking-wider text-slate-300">Entity Categories:</span>
-          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Anatomical Site</span>
-          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> Histological Pattern</span>
-          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span> Molecular / Biomarker</span>
-          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Benign Indicator</span>
-        </div>
-
-        <div id="tokenContainer" class="flex flex-wrap gap-2 p-4 rounded-lg bg-slate-900/40 border border-slate-800 min-h-[70px] items-center">
-          <!-- Dynamically populated -->
-        </div>
-      </div>
-
-      <!-- MULTI-TASK HEAD 3 & 4: THERAPEUTIC NDCG RANKING & LONGITUDINAL SURVIVAL -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- Multi-Task Head 3: NDCG Ranked Therapeutic Protocol -->
-        <div class="glass-panel p-6 space-y-4 border border-slate-800">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div>
-              <h4 class="text-sm font-bold uppercase tracking-wider text-slate-200">
-                Therapeutic Protocol Ranking
-              </h4>
-              <p class="text-[11px] text-slate-400">NDCG-Optimized Clinical Protocol (NCCN Guidelines)</p>
-            </div>
-            <span class="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              NDCG 0.946
-            </span>
-          </div>
-
-          <div id="rankedTherapiesContainer" class="space-y-2.5">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-
-        <!-- Multi-Task Head 4: Longitudinal Survival Curve -->
-        <div class="glass-panel p-6 space-y-4 border border-slate-800">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div>
-              <h4 class="text-sm font-bold uppercase tracking-wider text-slate-200">
-                Longitudinal Survival Projections
-              </h4>
-              <p class="text-[11px] text-slate-400">Continuous 1 to 5-Year Prognosis with 95% Confidence Bounds</p>
-            </div>
-            <span class="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-              C-Index 0.892
-            </span>
-          </div>
-
-          <div id="survivalProjectionsContainer" class="space-y-2.5">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-
-      </div>
-
-      <!-- PRECISION CLINICAL TRIAL MATCHING HEAD -->
-      <div class="glass-panel p-6 border border-slate-800 shadow-sm space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
-              Precision Oncology Matching
-            </div>
-            <h4 class="text-base font-bold text-white tracking-tight">
-              Matched Active Oncology Clinical Trials (NCI Registry)
-            </h4>
-            <p class="text-xs text-slate-400">Eligibility evaluation based on patient tumor subtype, TNM stage, and molecular biomarkers.</p>
-          </div>
-          <span class="text-xs font-mono text-slate-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-800">
-            NCI Registry Matched
-          </span>
-        </div>
-
-        <div id="clinicalTrialsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Dynamically populated -->
-        </div>
-      </div>
-
-      <!-- AUTONOMOUS MULTIDISCIPLINARY VIRTUAL TUMOR BOARD (MDT) -->
-      <div class="glass-panel p-6 border border-slate-800 shadow-sm space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-3">
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
-              Multi-Specialist Consensus
-            </div>
-            <h4 class="text-lg font-bold text-white tracking-tight">
-              Multidisciplinary Virtual Tumor Board (MDT) Consensus Console
-            </h4>
-            <p class="text-xs text-slate-400">Autonomous consensus simulation across Surgical, Medical, Radiation, and Molecular Pathology disciplines.</p>
-          </div>
-          
+    <!-- ============================================================== -->
+    <!-- HIGH PRIORITY SECTION 5: RANKED MEDICATIONS & SURVIVAL         -->
+    <!-- ============================================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Ranked Therapies -->
+      <div class="glass-panel p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-[#2c3036] pb-3">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-mono text-slate-200 bg-slate-900 px-3 py-1.5 rounded-md border border-slate-800 flex items-center gap-1.5 font-semibold">
-              <span>Concordance:</span> <span id="mdtConcordanceHeader">97.4% Unanimous</span>
-            </span>
-            <span id="mdtBoardIdBadge" class="text-xs font-mono text-slate-400 bg-slate-900 px-2.5 py-1.5 rounded-md border border-slate-800">
-              MDT-948201
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-200">
+              Ranked Treatment Protocol
+            </h4>
+            <span class="has-tooltip relative inline-flex items-center">
+              <button type="button" class="info-btn" aria-label="Description">i</button>
+              <span class="human-tooltip absolute bottom-full mb-2 left-0 w-64 p-2.5 rounded-xl text-xs">
+                Official clinical guideline-backed therapies ordered by clinical efficacy and safety.
+              </span>
             </span>
           </div>
+          <span class="text-xs font-mono text-emerald-400">NCCN Ranked</span>
         </div>
 
-        <!-- MDT Consensus Summary Banner -->
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div class="space-y-1">
-            <div class="text-xs font-semibold text-slate-200 flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span id="mdtConsensusVerdictText">Unanimous Multidisciplinary Consensus Plan Ratified</span>
+        <div id="rankedTherapiesContainer" class="space-y-2.5">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Problem 6: Why therapies ranked link -->
+        <div class="has-tooltip relative inline-block">
+          <button type="button" class="why-metric-trigger">
+            Why are treatments ranked in this order? <span class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</span>
+          </button>
+          <div class="human-tooltip absolute bottom-full mb-1 left-0 w-72 p-2.5 rounded-xl text-xs text-left">
+            <strong class="text-blue-400 block mb-0.5">Targeted Efficacy:</strong>
+            Ranked using NDCG score against NCCN oncology guidelines. Medications with highest tumor clearance and fewest pharmacogenomic interactions are prioritized at the top.
+          </div>
+        </div>
+      </div>
+
+      <!-- 5-Year Survival Timeline -->
+      <div class="glass-panel p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-[#2c3036] pb-3">
+          <div class="flex items-center gap-2">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-200">
+              Longitudinal Survival Curve
+            </h4>
+            <span class="has-tooltip relative inline-flex items-center">
+              <button type="button" class="info-btn" aria-label="Description">i</button>
+              <span class="human-tooltip absolute bottom-full mb-2 left-0 w-64 p-2.5 rounded-xl text-xs">
+                Statistically projected survival probability from 1 to 5 years post-diagnosis.
+              </span>
+            </span>
+          </div>
+          <span class="text-xs font-mono text-blue-400">Cox Proportional Model</span>
+        </div>
+
+        <div id="survivalProjectionsContainer" class="space-y-2.5">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Problem 6: Why survival curve is calculated link -->
+        <div class="has-tooltip relative inline-block">
+          <button type="button" class="why-metric-trigger">
+            Why is the longitudinal curve calculated? <span class="info-btn !w-3.5 !h-3.5 !text-[9px]">i</span>
+          </button>
+          <div class="human-tooltip absolute bottom-full mb-1 left-0 w-72 p-2.5 rounded-xl text-xs text-left">
+            <strong class="text-blue-400 block mb-0.5">Long-Term Prognosis:</strong>
+            Different cancers have varied recurrence risks over time. The 1-to-5 year curve helps patients and physicians schedule optimal imaging intervals (every 3 or 6 months).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TOGGLEABLE HIDDEN TAB: NIL VALUES, BASELINE & ZERO-RISK DATA   -->
+    <!-- ============================================================== -->
+    <div class="glass-panel p-6 border border-[#2c3036] space-y-4">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <h4 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <span>🗂️</span> Nil Values &amp; Normal Baseline Records
+          </h4>
+          <span class="has-tooltip relative inline-flex items-center">
+            <button type="button" class="info-btn" aria-label="Description">i</button>
+            <span class="human-tooltip absolute bottom-full mb-2 left-0 sm:left-1/2 sm:-translate-x-1/2 w-80 p-3 rounded-xl text-xs z-50">
+              <strong class="text-blue-400 block mb-1">Baseline Non-Malignant Records:</strong>
+              These tests returned negative or within standard physiological limits (e.g. 0% somatic mutation, normal liver/kidney filters, standard drug clearance). You can inspect them anytime.
+            </span>
+          </span>
+        </div>
+
+        <!-- Toggle Button (Problem 5: Icon without eye emoji) -->
+        <button id="toggleNilRecordsBtn" type="button" class="px-4 py-2 rounded-xl bg-[#111315] hover:bg-[#202327] border border-[#2c3036] text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm">
+          <span id="nilToggleIcon">📋</span> <span id="nilToggleText">Show Nil &amp; Baseline Records (4 Hidden)</span>
+        </button>
+      </div>
+
+      <!-- The Hidden Container (Collapsed by Default) -->
+      <div id="nilRecordsContainer" class="hidden pt-3 border-t border-[#2c3036] space-y-6">
+        
+        <!-- Nil Record 1: Baseline Organ Clearance (All normal values) -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-300">Baseline Organ Clearance (Normal Physiological Bounds)</span>
+            <span class="text-emerald-400 font-mono text-[11px]">100% Cleared</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036]">
+              <span class="text-slate-500 block text-[10px]">Kidney Clearance (CrCl)</span>
+              <span id="renalCrClText" class="font-mono text-emerald-400 font-bold text-sm block">94 mL/min</span>
+              <span class="text-[10px] text-slate-500 block">Normal range (&ge;60)</span>
             </div>
-            <p id="mdtClinicalSummaryText" class="text-xs text-slate-300 leading-relaxed">
-              All 4 oncology specialists reviewed the multimodal parameters with full concordance on surgical clearance, systemic sequencing, and precision radiotherapy.
-            </p>
-          </div>
-          <div id="mdtRatificationStatusBadge" class="px-3 py-1.5 rounded-md bg-slate-950 border border-slate-800 text-xs font-mono font-medium text-slate-300 whitespace-nowrap">
-            Status: Pending Attending Ratification
+            <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036]">
+              <span class="text-slate-500 block text-[10px]">Liver Total Bilirubin</span>
+              <span id="hepaticBilirubinText" class="font-mono text-emerald-400 font-bold text-sm block">0.7 mg/dL</span>
+              <span class="text-[10px] text-slate-500 block">Normal range (&le;1.2)</span>
+            </div>
+            <div class="p-3 rounded-xl bg-[#111315] border border-[#2c3036]">
+              <span class="text-slate-500 block text-[10px]">Heart Ejection Fraction</span>
+              <span id="cardiacLVEFText" class="font-mono text-emerald-400 font-bold text-sm block">62%</span>
+              <span class="text-[10px] text-slate-500 block">Safe ceiling (&gt;50%)</span>
+            </div>
           </div>
         </div>
 
-        <!-- 4 Specialist Interactive Cards -->
-        <div>
-          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-            Dedicated Specialist Reasoning &amp; Clinical Positions
+        <!-- Nil Record 2: Normal / Zero-Toxicity Pharmacogenomics -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-300">Enzymatic Screen (DPYD / UGT1A1 / TPMT Low Risk)</span>
+            <span id="pharmacoSafetyBadge" class="text-slate-400 font-mono text-[11px]">Normal Drug Clearance</span>
           </div>
-          <div id="mdtSpecialistsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div id="pharmacoEnzymesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <!-- Dynamically populated -->
           </div>
         </div>
 
-        <!-- Deliberation Points & Ratified Action Plan -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-            <span class="font-semibold text-slate-200 block">
-              Key Board Deliberations &amp; Trade-off Analysis
-            </span>
-            <ul id="mdtDeliberationList" class="list-disc list-inside space-y-1.5 text-slate-400 font-normal">
-              <!-- Dynamically populated -->
-            </ul>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-            <span class="font-semibold text-slate-200 block">
-              Multidisciplinary Ratified Action Plan
-            </span>
-            <ul id="mdtActionPlanList" class="list-decimal list-inside space-y-1.5 text-slate-300 font-normal">
-              <!-- Dynamically populated -->
-            </ul>
-          </div>
-        </div>
-
-        <!-- Clinician Interactive Ratification Console -->
-        <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">
-              Attending Physician Consensus Ratification &amp; EHR Sign-off
-            </span>
-            <span class="text-[11px] font-mono text-slate-400">Audit-Ready Signoff</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div class="space-y-1">
-              <label class="text-[11px] font-medium text-slate-400">Attending Clinician / Fellow:</label>
-              <input type="text" id="clinicianNameInput" value="Dr. J. Kowalski, MD (Chief Oncologist)" class="w-full px-3 py-1.5 rounded-md bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-blue-500">
+        <!-- Nil Record 3: Wild-Type / Non-Mutated Somatic DNA -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-300">Tumor DNA Mutations (NGS Somatic Profile)</span>
+            <div class="flex items-center gap-2 font-mono text-[11px] text-slate-400">
+              <span>TMB: <strong id="ngsTMBText" class="text-slate-200">6.8</strong></span>
+              <span>MSI: <strong id="ngsMSIText" class="text-slate-200">MSS</strong></span>
+              <span>PD-L1: <strong id="ngsPDL1Text" class="text-slate-200">35%</strong></span>
             </div>
-            <div class="sm:col-span-2 space-y-1">
-              <label class="text-[11px] font-medium text-slate-400">Clinical Nuance &amp; Override Notes (Optional):</label>
-              <input type="text" id="clinicianNotesInput" placeholder="e.g., Concur with R0 lumpectomy plan; order reflex Oncotype DX prior to final adjuvant chemo schedule." class="w-full px-3 py-1.5 rounded-md bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-blue-500">
-            </div>
-          </div>
-
-          <div class="flex items-center justify-end gap-3 pt-1">
-            <button id="ratifyMDTBtn" type="button" class="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm">
-              <span>✓</span> Ratify MDT Consensus &amp; Transmit to EHR Protocol
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- LONGITUDINAL RECIST 1.1 DISEASE TRAJECTORY ENGINE -->
-      <div class="glass-panel p-6 border border-slate-800 shadow-sm space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-3">
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
-              RECIST 1.1 Longitudinal Engine
-            </div>
-            <h4 class="text-lg font-bold text-white tracking-tight">
-              Longitudinal Disease Trajectory &amp; RECIST 1.1 Surveillance Timeline
-            </h4>
-            <p class="text-xs text-slate-400">Tracks measurable tumor diameter (mm), RECIST 1.1 response categories, and biochemical clearance kinetics across milestones.</p>
-          </div>
-          
-          <div class="flex items-center gap-2 text-xs font-mono">
-            <span class="text-slate-300 bg-slate-900 px-3 py-1.5 rounded-md border border-slate-800 font-semibold">
-              Projected 5-Yr DFS: <span id="projectedDFSVal">88%</span>
-            </span>
-          </div>
-        </div>
-
-        <!-- 4-Milestone Interactive Timeline Cards -->
-        <div id="longitudinalMilestonesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <!-- Dynamically populated -->
-        </div>
-
-        <!-- Biochemical Kinetics & Clearance Velocity Box -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-          <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
-            <span class="text-slate-400 text-[11px] block">CA-125 Clearance Half-Life</span>
-            <span id="ca125HalfLifeText" class="font-mono font-bold text-slate-200 text-sm">14.2 days</span>
-            <span class="text-[10px] text-slate-500 block">Corresponds to rapid serologic cytoreduction</span>
-          </div>
-          <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
-            <span class="text-slate-400 text-[11px] block">CEA Clearance Half-Life</span>
-            <span id="ceaHalfLifeText" class="font-mono font-bold text-slate-200 text-sm">11.8 days</span>
-            <span class="text-[10px] text-slate-500 block">Antigen shed returns below normal threshold</span>
-          </div>
-          <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1">
-            <span class="text-slate-400 text-[11px] block">Biochemical Velocity Assessment</span>
-            <span id="bioVelocityStatusText" class="font-mono font-bold text-emerald-400 text-sm">Optimal Clearance Rate</span>
-            <span class="text-[10px] text-slate-500 block">&gt;70% antigen reduction achieved by Month 3</span>
-          </div>
-        </div>
-
-        <!-- Interactive Custom Follow-up Milestone Projection Sandbox -->
-        <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">
-              Simulate Future Milestone &amp; RECIST Response Projection
-            </span>
-            <span class="text-[11px] font-mono text-slate-400">Predictive Decay Model</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-            <div class="space-y-1">
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-slate-400">Projection Month:</span>
-                <span id="milestoneMonthDisplay" class="font-mono font-bold text-slate-200">Month 9</span>
-              </div>
-              <input id="milestoneMonthSlider" type="range" min="1" max="24" step="1" value="9" class="w-full accent-blue-600 cursor-pointer">
-            </div>
-
-            <div class="space-y-1">
-              <label class="text-[11px] font-medium text-slate-400">Projected Regimen Intensity:</label>
-              <select id="milestoneRegimenSelect" class="w-full px-3 py-1.5 rounded-md bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
-                <option value="adjuvant">Standard Adjuvant Doublet / Targeted Protocol</option>
-                <option value="dose_dense">Dose-Dense Intensification Regimen</option>
-                <option value="maintenance">Maintenance Endocrine / Monotherapy</option>
-              </select>
-            </div>
-
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs space-y-1">
-              <div class="flex items-center justify-between">
-                <span class="text-slate-400">RECIST 1.1 Category:</span>
-                <span id="projectedRecistBadge" class="font-mono font-semibold px-2 py-0.5 rounded bg-slate-900 text-slate-200 border border-slate-800 text-[11px]">Partial Response (PR)</span>
-              </div>
-              <div class="flex items-center justify-between text-[11px] text-slate-300 font-mono">
-                <span>Target Lesion: <strong id="projectedLesionDiameter" class="text-white">4 mm (-89%)</strong></span>
-                <span>CA-125: <strong id="projectedCa125Val" class="text-slate-200">13.5 U/mL</strong></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- NEXT-GENERATION SEQUENCING (NGS) & RESISTANCE MATRIX -->
-      <div class="glass-panel p-6 border border-slate-800 shadow-sm space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-3">
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
-              Precision Oncology Genomics
-            </div>
-            <h4 class="text-lg font-bold text-white tracking-tight">
-              Next-Generation Sequencing (NGS) Somatic Profiler &amp; Drug Resistance Matrix
-            </h4>
-            <p class="text-xs text-slate-400">Identifies actionable somatic alterations, variant allele frequencies (VAF%), targeted sensitivities, and emerging resistance mechanisms.</p>
-          </div>
-          
-          <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
-            <span class="text-slate-300 bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">
-              TMB: <span id="ngsTMBText">6.8 mut/Mb</span>
-            </span>
-            <span class="text-slate-300 bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">
-              MSI: <span id="ngsMSIText">MSS</span>
-            </span>
-            <span class="text-slate-300 bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">
-              PD-L1: <span id="ngsPDL1Text">35% TPS</span>
-            </span>
-          </div>
-        </div>
-
-        <!-- Actionable Somatic Alterations Grid -->
-        <div>
-          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2.5">
-            Actionable Somatic Driver Alterations (AMP / ASCO / CAP Tiers)
           </div>
           <div id="ngsVariantsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <!-- Dynamically populated -->
           </div>
         </div>
 
-        <!-- Precision Drug Sensitivity vs Resistance Matrix -->
-        <div class="space-y-2.5">
-          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Targeted Drug Sensitivity Matrix &amp; Resistance Surveillance
+        <!-- Nil Record 4: Matched Clinical Trials Registry -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-300">Clinical Trials Registry Eligibility</span>
+            <span class="text-slate-400 text-[11px] font-mono">Registry Database</span>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border border-slate-800 rounded-lg overflow-hidden">
-              <thead class="bg-slate-900 text-slate-300 font-semibold uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th class="p-3">Targeted Therapy &amp; Class</th>
-                  <th class="p-3">Sensitive Alteration</th>
-                  <th class="p-3">Approval / Guideline Status</th>
-                  <th class="p-3">Anticipated Clinical Benefit</th>
-                </tr>
-              </thead>
-              <tbody id="ngsDrugSensitivityTbody" class="divide-y divide-slate-800/80 bg-slate-950/70 text-slate-300">
-                <!-- Dynamically populated -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Emerging Resistance Mechanisms Monitored -->
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-          <span class="text-xs font-semibold text-slate-200 block">
-            Resistance Mechanisms Monitored via Longitudinal Liquid Biopsy (ctDNA)
-          </span>
-          <div id="ngsResistanceMechanismsContainer" class="space-y-2 text-xs">
+          <div id="clinicalTrialsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <!-- Dynamically populated -->
           </div>
         </div>
+
+        <!-- Nil Record 5: Clinical Export & FHIR Bundle -->
+        <div class="p-4 rounded-xl bg-[#111315] border border-[#2c3036] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div class="space-y-0.5">
+            <span class="font-bold text-slate-300 block">FHIR R4 Diagnostic Report &amp; EHR Export</span>
+            <span class="text-slate-500 block">Interoperable JSON standard CarePlan &amp; DiagnosticReport records</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="downloadFHIRReport()" type="button" class="px-3 py-1.5 rounded-lg bg-[#181a1d] hover:bg-[#202327] border border-[#3d434b] text-slate-300 font-semibold cursor-pointer">
+              Download FHIR (.json)
+            </button>
+            <button onclick="downloadDiagnosticReport()" type="button" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer">
+              Download Clinical (.txt)
+            </button>
+          </div>
+        </div>
+
       </div>
-
-      <!-- PHARMACOGENOMICS SAFETY & ORGAN CLEARANCE GATEKEEPER -->
-      <div class="glass-panel p-6 border border-slate-800 shadow-sm space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
-          <div>
-            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
-              Safety &amp; Pharmacogenomics Gatekeeper
-            </div>
-            <h4 class="text-lg font-bold text-white tracking-tight">
-              Pharmacogenomic Toxicity Screening &amp; Organ Clearance Gatekeeper
-            </h4>
-            <p class="text-xs text-slate-400">Pre-treatment enzymatic status (DPYD, UGT1A1, TPMT) and baseline organ tolerance parameters to prevent adverse events.</p>
-          </div>
-          <span id="pharmacoSafetyBadge" class="text-xs font-mono font-semibold px-3 py-1.5 rounded-md bg-slate-900 text-slate-200 border border-slate-800">
-            ✓ Cleared for Standard Protocols
-          </span>
-        </div>
-
-        <!-- Pharmacogenomic Enzymes Grid -->
-        <div id="pharmacoEnzymesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <!-- Dynamically populated -->
-        </div>
-
-        <!-- Organ Clearance Baselines -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-          <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800 space-y-1">
-            <span class="text-slate-400 block font-medium">Renal Clearance (eGFR / CrCl):</span>
-            <span id="renalCrClText" class="font-mono text-emerald-400 font-bold block">94 mL/min</span>
-            <span class="text-[10px] text-slate-500 block">Safe for Cisplatin (&gt;=60) &amp; Pemetrexed (&gt;=45)</span>
-          </div>
-          <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800 space-y-1">
-            <span class="text-slate-400 block font-medium">Hepatic Total Bilirubin:</span>
-            <span id="hepaticBilirubinText" class="font-mono text-emerald-400 font-bold block">0.7 mg/dL</span>
-            <span class="text-[10px] text-slate-500 block">Normal liver excretion; full-dose taxane safe</span>
-          </div>
-          <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800 space-y-1">
-            <span class="text-slate-400 block font-medium">Cardiac Ejection Fraction (LVEF):</span>
-            <span id="cardiacLVEFText" class="font-mono text-emerald-400 font-bold block">62%</span>
-            <span class="text-[10px] text-slate-500 block">Exceeds 50% safety ceiling for Anthracyclines &amp; Trastuzumab</span>
-          </div>
-        </div>
-      </div>
-
     </div>
 
   </main>
 
-  <!-- Footer -->
-  <footer class="mt-16 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-    Explainable Hybrid AI Cancer Diagnosis Suite · Clinical Decision Support Console · ResNet-50 · BioBERT · Tabular SHAP · FHIR R4
+  <!-- Clean Footer (Problem 7 & 8: celldiag) -->
+  <footer class="mt-16 border-t border-[#2c3036] py-6 text-center text-xs text-slate-500">
+    celldiag · Multimodal Precision Oncology Decision Support System
   </footer>
 
-  <script src="js/app.js?v=4.1.0"></script>
+  <script src="js/app.js?v=6.0.0"></script>
 </body>
 </html>
