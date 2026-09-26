@@ -1,0 +1,8 @@
+{
+  "name": "Explainable Hybrid AI Cancer Diagnosis",
+  "description": "Multimodal XAI clinical decision support suite for histopathology, BioBERT NLP reports, and clinical biomarker fusion with Grad-CAM and SHAP.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

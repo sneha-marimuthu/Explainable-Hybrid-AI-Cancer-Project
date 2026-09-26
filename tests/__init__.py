@@ -1,3 +1,0 @@
-"""
-PyTest Test Suite
-"""

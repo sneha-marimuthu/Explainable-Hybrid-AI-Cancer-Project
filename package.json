@@ -1,0 +1,17 @@
+{
+  "name": "explainable-hybrid-ai-cancer-diagnosis",
+  "version": "1.0.0",
+  "description": "Multimodal XAI clinical decision support suite for histopathology, BioBERT NLP reports, and clinical biomarker fusion with Grad-CAM and SHAP.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'Build complete'"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}
