@@ -50,6 +50,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Publication Paper Figures Modal (Fig. 3 & Fig. 4)
+  const openPaperFiguresBtn = document.getElementById('openPaperFiguresBtn');
+  const paperFiguresModal = document.getElementById('paperFiguresModal');
+  const closePaperFiguresBtn = document.getElementById('closePaperFiguresBtn');
+
+  if (openPaperFiguresBtn && paperFiguresModal) {
+    openPaperFiguresBtn.addEventListener('click', () => {
+      paperFiguresModal.classList.remove('hidden');
+    });
+  }
+
+  if (closePaperFiguresBtn && paperFiguresModal) {
+    closePaperFiguresBtn.addEventListener('click', () => {
+      paperFiguresModal.classList.add('hidden');
+    });
+  }
+
+  if (paperFiguresModal) {
+    paperFiguresModal.addEventListener('click', (e) => {
+      if (e.target === paperFiguresModal) {
+        paperFiguresModal.classList.add('hidden');
+      }
+    });
+  }
+
   // Baseline / Nil Values Toggle
   const toggleNilRecordsBtn = document.getElementById('toggleNilRecordsBtn');
   const nilRecordsContainer = document.getElementById('nilRecordsContainer');
