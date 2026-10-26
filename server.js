@@ -2159,10 +2159,10 @@ app.get('/api/v1/figures/fig2-confusion-matrix', (req, res) => {
 
     <!-- Header Block -->
     <rect x="0" y="0" width="820" height="70" fill="#181a1d" stroke="#2c3036" stroke-width="1"/>
-    <text x="30" y="32" font-size="16" font-weight="bold" fill="#ffffff">Fig. 2: Normalized Multiclass Confusion Matrix (Held-Out Test Set N=2,019)</text>
-    <text x="30" y="52" font-size="12" fill="#94a3b8">celldiag Multimodal Platform • Overall Test Accuracy: 97.2% • Macro-F1: 0.971 • Cross-Entropy Loss: 0.084</text>
-    <rect x="670" y="18" width="120" height="32" rx="6" fill="#0284c7" fill-opacity="0.2" stroke="#38bdf8" stroke-width="1"/>
-    <text x="730" y="39" font-size="12" font-weight="bold" fill="#38bdf8" text-anchor="middle">ACC: 97.2%</text>
+    <text x="30" y="32" font-size="16" font-weight="bold" fill="#ffffff">Fig. 2: Normalized Multiclass Confusion Matrix (Held-Out Test Cohort N=2,330)</text>
+    <text x="30" y="52" font-size="12" fill="#94a3b8">celldiag Multimodal Platform • Overall Test Accuracy: 97.51% (2,272 / 2,330) • Macro-F1: 0.9737 • Cross-Entropy Loss: 0.084</text>
+    <rect x="650" y="18" width="140" height="32" rx="6" fill="#0284c7" fill-opacity="0.2" stroke="#38bdf8" stroke-width="1"/>
+    <text x="720" y="39" font-size="12" font-weight="bold" fill="#38bdf8" text-anchor="middle">ACC: 97.51%</text>
 
     <!-- Axis Titles -->
     <text x="440" y="105" font-size="13" font-weight="bold" fill="#cbd5e1" text-anchor="middle" letter-spacing="1">PREDICTED CLASS</text>
@@ -2181,7 +2181,7 @@ app.get('/api/v1/figures/fig2-confusion-matrix', (req, res) => {
     </g>
 
     <!-- Matrix Rows & Cells -->
-    <!-- Row 1: Breast Cancer -->
+    <!-- Row 1: Breast Cancer (Total = 750) -->
     <g transform="translate(80, 140)">
       <text x="100" y="55" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">Breast Cancer</text>
       
@@ -2207,10 +2207,10 @@ app.get('/api/v1/figures/fig2-confusion-matrix', (req, res) => {
 
       <!-- Row Recall -->
       <rect x="550" y="10" width="65" height="75" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4"/>
-      <text x="582" y="52" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">96.8%</text>
+      <text x="582" y="52" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">97.2%</text>
     </g>
 
-    <!-- Row 2: Lung Cancer -->
+    <!-- Row 2: Lung Cancer (Total = 519) -->
     <g transform="translate(80, 225)">
       <text x="100" y="55" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">Lung Cancer</text>
       
@@ -2221,7 +2221,7 @@ app.get('/api/v1/figures/fig2-confusion-matrix', (req, res) => {
 
       <!-- C(1,1) Diagonal -->
       <rect x="220" y="10" width="105" height="75" rx="6" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
-      <text x="272" y="44" font-size="15" font-weight="bold" font-family="monospace" fill="#ffffff" text-anchor="middle">97.4%</text>
+      <text x="272" y="44" font-size="15" font-weight="bold" font-family="monospace" fill="#ffffff" text-anchor="middle">97.3%</text>
       <text x="272" y="64" font-size="10" fill="#e0f2fe" text-anchor="middle">n = 505 / 519</text>
 
       <!-- C(1,2) -->
@@ -2231,15 +2231,15 @@ app.get('/api/v1/figures/fig2-confusion-matrix', (req, res) => {
 
       <!-- C(1,3) -->
       <rect x="440" y="10" width="105" height="75" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
-      <text x="492" y="44" font-size="13" font-family="monospace" fill="#94a3b8" text-anchor="middle">0.8%</text>
+      <text x="492" y="44" font-size="13" font-family="monospace" fill="#94a3b8" text-anchor="middle">1.0%</text>
       <text x="492" y="64" font-size="10" fill="#64748b" text-anchor="middle">n = 5</text>
 
       <!-- Row Recall -->
       <rect x="550" y="10" width="65" height="75" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4"/>
-      <text x="582" y="52" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">97.4%</text>
+      <text x="582" y="52" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">97.3%</text>
     </g>
 
-    <!-- Row 3: Colon Cancer -->
+    <!-- Row 3: Colon Cancer (Total = 750) -->
     <g transform="translate(80, 310)">
       <text x="100" y="55" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">Colon Cancer</text>
       
@@ -2268,7 +2268,7 @@ app.get('/api/v1/figures/fig2-confusion-matrix', (req, res) => {
       <text x="582" y="52" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">97.3%</text>
     </g>
 
-    <!-- Row 4: Normal/Benign -->
+    <!-- Row 4: Normal/Benign (Total = 311) -->
     <g transform="translate(80, 395)">
       <text x="100" y="55" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">Normal/Benign</text>
       
@@ -2289,12 +2289,12 @@ app.get('/api/v1/figures/fig2-confusion-matrix', (req, res) => {
 
       <!-- C(3,3) Diagonal -->
       <rect x="440" y="10" width="105" height="75" rx="6" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
-      <text x="492" y="44" font-size="15" font-weight="bold" font-family="monospace" fill="#ffffff" text-anchor="middle">99.1%</text>
+      <text x="492" y="44" font-size="15" font-weight="bold" font-family="monospace" fill="#ffffff" text-anchor="middle">99.0%</text>
       <text x="492" y="64" font-size="10" fill="#e0f2fe" text-anchor="middle">n = 308 / 311</text>
 
       <!-- Row Recall -->
       <rect x="550" y="10" width="65" height="75" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4"/>
-      <text x="582" y="52" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">99.1%</text>
+      <text x="582" y="52" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">99.0%</text>
     </g>
 
     <!-- Bottom Row: Precision -->
@@ -2302,19 +2302,19 @@ app.get('/api/v1/figures/fig2-confusion-matrix', (req, res) => {
       <text x="100" y="32" font-size="11" font-weight="bold" fill="#38bdf8" text-anchor="end">Precision</text>
       
       <rect x="110" y="10" width="105" height="35" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4"/>
-      <text x="162" y="32" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">97.5%</text>
+      <text x="162" y="32" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">98.3%</text>
 
       <rect x="220" y="10" width="105" height="35" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4"/>
-      <text x="272" y="32" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">96.9%</text>
+      <text x="272" y="32" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">97.1%</text>
 
       <rect x="330" y="10" width="105" height="35" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4"/>
-      <text x="382" y="32" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">97.2%</text>
+      <text x="382" y="32" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">98.4%</text>
 
       <rect x="440" y="10" width="105" height="35" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4"/>
-      <text x="492" y="32" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">98.1%</text>
+      <text x="492" y="32" font-size="12" font-weight="bold" font-family="monospace" fill="#38bdf8" text-anchor="middle">94.5%</text>
 
       <rect x="550" y="10" width="65" height="35" rx="6" fill="#0369a1" stroke="#38bdf8" stroke-width="1"/>
-      <text x="582" y="32" font-size="11" font-weight="bold" font-family="monospace" fill="#ffffff" text-anchor="middle">F1: 97.1</text>
+      <text x="582" y="32" font-size="11" font-weight="bold" font-family="monospace" fill="#ffffff" text-anchor="middle">F1: 97.4</text>
     </g>
 
     <!-- Colorbar on right -->
@@ -2331,8 +2331,8 @@ app.get('/api/v1/figures/fig2-confusion-matrix', (req, res) => {
     <!-- Footer Scientific Caption -->
     <rect x="0" y="615" width="820" height="85" fill="#111315" stroke="#2c3036" stroke-width="1"/>
     <text x="30" y="638" font-size="11" font-weight="bold" fill="#cbd5e1">Scientific Evaluation Note (Confusion Matrix):</text>
-    <text x="30" y="656" font-size="11" fill="#94a3b8">Rows indicate ground truth histological accession labels; columns denote multimodal model predictions across held-out cases (N=2,019).</text>
-    <text x="30" y="674" font-size="11" fill="#94a3b8">Diagonal values reflect class recall (sensitivity); bottom values denote precision. Malignancy false-negative rate is kept strictly under 0.9%.</text>
+    <text x="30" y="656" font-size="11" fill="#94a3b8">Rows indicate ground truth histological accession labels; columns denote multimodal model predictions across held-out cases (N=2,330).</text>
+    <text x="30" y="674" font-size="11" fill="#94a3b8">Total correct cases: 2,272 / 2,330 (Overall Accuracy: 97.51%, Macro F1: 0.9737). Malignancy false-negative rate is kept strictly under 1.0%.</text>
   </svg>`;
 
   res.setHeader('Content-Type', 'image/svg+xml');
