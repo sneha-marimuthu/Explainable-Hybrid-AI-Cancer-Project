@@ -123,6 +123,60 @@
           </button>
         </div>
 
+        <!-- Problem Fix: Instant One-Click Sample Combination Library -->
+        <div class="p-3.5 rounded-xl bg-[#111315] border border-[#2c3036] space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+              <span>⚡</span> One-Click Sample Combinations (All Clinical &amp; Modality Scenarios)
+            </span>
+            <span class="text-[10px] text-slate-400">Click to instantly populate and run through model</span>
+          </div>
+
+          <!-- Combination Row 1: Full Tri-Modal Diagnostic Classes -->
+          <div class="space-y-1">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">1. Tri-Modal Clinical Classes (Slide + Pathology Notes + Biomarkers):</span>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button type="button" class="combo-preset-btn px-2.5 py-1 rounded-lg bg-pink-500/15 hover:bg-pink-500/25 text-pink-300 border border-pink-500/30 text-xs font-medium cursor-pointer transition-colors" data-combo="breast_trimodal">
+                🌸 Breast Ductal Carcinoma (IDC)
+              </button>
+              <button type="button" class="combo-preset-btn px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 text-xs font-medium cursor-pointer transition-colors" data-combo="lung_trimodal">
+                🫁 Lung Adenocarcinoma (LUAD)
+              </button>
+              <button type="button" class="combo-preset-btn px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs font-medium cursor-pointer transition-colors" data-combo="colon_trimodal">
+                🔬 Colorectal Adenocarcinoma
+              </button>
+              <button type="button" class="combo-preset-btn px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-medium cursor-pointer transition-colors" data-combo="normal_trimodal">
+                🟢 Normal / Benign Non-Malignant
+              </button>
+            </div>
+          </div>
+
+          <!-- Combination Row 2: Modality Ablation Combinations -->
+          <div class="space-y-1 pt-1 border-t border-[#2c3036]/60">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">2. Modality Ablation Combinations (Partial / Incomplete Clinical Inputs):</span>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button type="button" class="combo-preset-btn px-2 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 text-[11px] font-medium cursor-pointer transition-colors" data-combo="text_only">
+                📄 Biopsy Text Only (NLP Unimodal)
+              </button>
+              <button type="button" class="combo-preset-btn px-2 py-1 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 border border-blue-500/30 text-[11px] font-medium cursor-pointer transition-colors" data-combo="slide_only">
+                🖼️ Histology Slide Only (Vision Unimodal)
+              </button>
+              <button type="button" class="combo-preset-btn px-2 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-[11px] font-medium cursor-pointer transition-colors" data-combo="vitals_only">
+                🧪 Biomarkers Only (Tabular Unimodal)
+              </button>
+              <button type="button" class="combo-preset-btn px-2 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 text-[11px] font-medium cursor-pointer transition-colors" data-combo="text_vitals">
+                📝 Notes + Biomarkers (Slide Omitted)
+              </button>
+              <button type="button" class="combo-preset-btn px-2 py-1 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 border border-teal-500/30 text-[11px] font-medium cursor-pointer transition-colors" data-combo="slide_text">
+                📑 Slide + Biopsy Notes (No Vitals)
+              </button>
+              <button type="button" class="combo-preset-btn px-2 py-1 rounded-lg bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 border border-orange-500/30 text-[11px] font-medium cursor-pointer transition-colors" data-combo="conflict_discordance">
+                ⚠️ Conflict Test (Lung Slide + Brain Text)
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Inline Live Discordance Warning within Drawer -->
         <div id="drawerDiscordanceWarning" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -156,6 +210,8 @@
                   <button type="button" id="loadSampleLungBtn" class="text-blue-400 hover:underline text-[11px] font-medium cursor-pointer">Lung</button>
                   <span class="text-slate-600">·</span>
                   <button type="button" id="loadSampleColonBtn" class="text-blue-400 hover:underline text-[11px] font-medium cursor-pointer">Colon</button>
+                  <span class="text-slate-600">·</span>
+                  <button type="button" id="loadSampleNormalBtn" class="text-emerald-400 hover:underline text-[11px] font-medium cursor-pointer">Normal</button>
                 </div>
               </div>
 
@@ -358,7 +414,7 @@
     <!-- ============================================================== -->
     <!-- HIGH PRIORITY SECTION 1: CORE PREDICTION & BIG VALUES          -->
     <!-- ============================================================== -->
-    <div class="glass-panel p-6 sm:p-8 space-y-6">
+    <div id="primaryVerdictCard" class="glass-panel p-6 sm:p-8 space-y-6">
       
       <!-- Top Title with Info Icon (Problem 5: i icon) -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2c3036] pb-4">

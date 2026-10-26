@@ -499,6 +499,21 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.arc(Math.random() * 224, Math.random() * 224, Math.random() * 8 + 3, 0, Math.PI * 2);
         ctx.fill();
       }
+    } else if (organType === 'normal' || organType === 'benign') {
+      fileName = 'normal_benign_wsi_20x.jpg';
+      sampleTitle = 'Normal / Benign Reference Tissue (20x)';
+      organDesc = 'Organ: Non-Malignant Control Tissue';
+      ctx.fillStyle = '#fdf4ff';
+      ctx.fillRect(0, 0, 224, 224);
+      // Uniform, spaced, benign epithelial nuclei
+      for (let i = 0; i < 24; i++) {
+        ctx.fillStyle = 'rgba(76, 29, 149, 0.45)';
+        ctx.beginPath();
+        const rx = 25 + (i % 6) * 32 + (Math.random() * 6);
+        const ry = 25 + Math.floor(i / 6) * 45 + (Math.random() * 6);
+        ctx.arc(rx, ry, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
     } else {
       // Breast default
       ctx.fillStyle = '#fce7f3';
@@ -532,10 +547,133 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadSampleBreastBtn = document.getElementById('loadSampleBreastBtn');
   const loadSampleLungBtn = document.getElementById('loadSampleLungBtn');
   const loadSampleColonBtn = document.getElementById('loadSampleColonBtn');
+  const loadSampleNormalBtn = document.getElementById('loadSampleNormalBtn');
 
   if (loadSampleBreastBtn) loadSampleBreastBtn.addEventListener('click', () => loadSampleOrgan('breast'));
   if (loadSampleLungBtn) loadSampleLungBtn.addEventListener('click', () => loadSampleOrgan('lung'));
   if (loadSampleColonBtn) loadSampleColonBtn.addEventListener('click', () => loadSampleOrgan('colon'));
+  if (loadSampleNormalBtn) loadSampleNormalBtn.addEventListener('click', () => loadSampleOrgan('normal'));
+
+  // Comprehensive Combination Presets (Covers all 4 classes & all modality subsets)
+  const COMBINATIONS = {
+    'breast_trimodal': {
+      organ: 'breast',
+      reportText: 'Histopathology core needle biopsy reveals invasive ductal carcinoma (IDC) of breast. Nuclear pleomorphism, high mitotic index, ER/PR negative, HER2 positive.',
+      ca125: 48.5,
+      cea: 12.4,
+      age: 58,
+      bp: 135
+    },
+    'lung_trimodal': {
+      organ: 'lung',
+      reportText: 'Pulmonary core biopsy confirms poorly differentiated lung adenocarcinoma (LUAD) of right upper lobe. EGFR exon 19 mutation positive, ALK negative, bronchial invasion.',
+      ca125: 14.2,
+      cea: 45.8,
+      age: 64,
+      bp: 142
+    },
+    'colon_trimodal': {
+      organ: 'colon',
+      reportText: 'Colonoscopy surgical pathology report indicates moderately differentiated colonic adenocarcinoma with submucosal invasion. Microsatellite instability (MSI-High) detected.',
+      ca125: 11.0,
+      cea: 38.2,
+      age: 62,
+      bp: 128
+    },
+    'normal_trimodal': {
+      organ: 'normal',
+      reportText: 'Biopsy tissue sample shows normal histology with no evidence of malignancy, atypical cell proliferation, or architectural distortion. Unremarkable cellular morphology and clear margins.',
+      ca125: 11.5,
+      cea: 1.2,
+      age: 45,
+      bp: 118
+    },
+    'text_only': {
+      organ: null,
+      reportText: 'Pulmonary core biopsy specimen reveals invasive lung adenocarcinoma with acinar growth pattern and desmoplastic stroma. Vision and tabular modalities are omitted in this ablation run.',
+      ca125: '',
+      cea: '',
+      age: '',
+      bp: ''
+    },
+    'slide_only': {
+      organ: 'colon',
+      reportText: '',
+      ca125: '',
+      cea: '',
+      age: '',
+      bp: ''
+    },
+    'vitals_only': {
+      organ: null,
+      reportText: '',
+      ca125: 68.5,
+      cea: 42.0,
+      age: 65,
+      bp: 140
+    },
+    'text_vitals': {
+      organ: null,
+      reportText: 'Core biopsy reveals invasive breast ductal carcinoma with axillary lymph node involvement.',
+      ca125: 52.4,
+      cea: 15.6,
+      age: 56,
+      bp: 132
+    },
+    'slide_text': {
+      organ: 'breast',
+      reportText: 'Infiltrating ductal carcinoma of breast tissue with moderate nuclear pleomorphism.',
+      ca125: '',
+      cea: '',
+      age: '',
+      bp: ''
+    },
+    'conflict_discordance': {
+      organ: 'lung',
+      reportText: 'Craniotomy biopsy demonstrates high-grade glioblastoma multiforme (IDH-wildtype, CNS WHO Grade 4) with marked cellular pleomorphism.',
+      ca125: 14.0,
+      cea: 2.5,
+      age: 54,
+      bp: 125
+    }
+  };
+
+  // Wire all Combination Preset buttons
+  document.querySelectorAll('.combo-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const comboKey = btn.dataset.combo;
+      const data = COMBINATIONS[comboKey];
+      if (!data) return;
+
+      // Populate text
+      if (reportTextInput) {
+        reportTextInput.value = data.reportText || '';
+        if (charCount) charCount.textContent = `${(data.reportText || '').length} chars`;
+      }
+
+      // Populate vitals
+      if (ca125Input) ca125Input.value = data.ca125 !== null && data.ca125 !== undefined ? data.ca125 : '';
+      if (ceaInput) ceaInput.value = data.cea !== null && data.cea !== undefined ? data.cea : '';
+      if (ageInput) ageInput.value = data.age !== null && data.age !== undefined ? data.age : '';
+      if (bpInput) bpInput.value = data.bp !== null && data.bp !== undefined ? data.bp : '';
+
+      // Populate or clear image
+      if (data.organ) {
+        loadSampleOrgan(data.organ);
+      } else {
+        if (imageInput) imageInput.value = '';
+        currentLoadedSampleOrgan = null;
+        if (dropZonePrompt) dropZonePrompt.classList.remove('hidden');
+        if (sampleLoadedInfo) sampleLoadedInfo.classList.add('hidden');
+        if (imagePreview) imagePreview.src = '';
+      }
+
+      updateModalityStatus();
+
+      // Trigger inference immediately so user sees the analysis run
+      executeInference();
+    });
+  });
 
   // Placeholder Attach Slide button inside stage
   if (placeholderAttachSlideBtn) {
@@ -579,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bp: 128
     },
     'CASE-04': {
-      organ: 'breast',
+      organ: 'normal',
       reportText: 'Biopsy tissue sample shows normal histology with no evidence of malignancy, atypical cell proliferation, or architectural distortion. Unremarkable cellular morphology.',
       ca125: 12.0,
       cea: 1.2,
@@ -696,11 +834,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Visual update pulse on verdict elements
+      // Visual update pulse and smooth scroll to results
       const verdictEl = document.getElementById('resCancerType');
       if (verdictEl) {
-        verdictEl.classList.add('ring-2', 'ring-blue-500/80', 'rounded-lg');
-        setTimeout(() => verdictEl.classList.remove('ring-2', 'ring-blue-500/80', 'rounded-lg'), 1800);
+        verdictEl.classList.add('ring-4', 'ring-blue-500', 'bg-blue-500/20', 'rounded-xl', 'p-1');
+        setTimeout(() => verdictEl.classList.remove('ring-4', 'ring-blue-500', 'bg-blue-500/20', 'p-1'), 2500);
+        
+        // Ensure user sees the analysis running and the live results update
+        const scrollTarget = document.getElementById('primaryVerdictCard') || verdictEl;
+        setTimeout(() => {
+          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
       }
 
     } catch (err) {
